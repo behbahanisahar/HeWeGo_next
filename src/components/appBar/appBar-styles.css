@@ -1,0 +1,6 @@
+.MuiAppBar-root   {
+  height: 6vh !important;
+}
+.MuiToolbar-regular{
+  min-height:6vh !important;
+}
