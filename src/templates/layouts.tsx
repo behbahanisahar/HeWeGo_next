@@ -1,11 +1,15 @@
+// templates/layouts.tsx
+import { FC } from 'react';
+import { Outlet } from 'react-router-dom';
 import ResponsiveAppBar from '../components/appBar/appBar';
 
-
-function Layout() {
-
+const Layout: FC = (): JSX.Element => {
   return (
-    <ResponsiveAppBar/>
+    <div>
+      <ResponsiveAppBar />
+      <Outlet />
+    </div>
   );
-}
+};
 
 export default Layout;
