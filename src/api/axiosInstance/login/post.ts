@@ -1,4 +1,3 @@
-// login api file
 import { axiosInstance } from '../axiosInstance';
 
 export interface ILoginPostData {
