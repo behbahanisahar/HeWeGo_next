@@ -13,6 +13,7 @@ const App: FC = (): JSX.Element => {
         main: '#64CCC5',
       },
     },
+    
   });
   
   theme = createTheme(theme, {

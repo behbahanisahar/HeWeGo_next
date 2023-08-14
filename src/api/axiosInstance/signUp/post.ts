@@ -1,9 +1,10 @@
 import { axiosInstance } from '../axiosInstance';
 
-export interface ISignUpPostData {
+export interface ISignUpPostData extends Record<string, string | number |undefined>{
     name: string;
     email: string;
     password: string;
+    confirmPassword?:string;
     city: string;
 }
 

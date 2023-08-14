@@ -9,6 +9,7 @@ export default defineConfig({
       '@/constants': path.resolve(__dirname, 'src/utils/constants'),
       '@/pages': path.resolve(__dirname, 'src/pages'),
       '@/components': path.resolve(__dirname, 'src/components'),
+      '@/validation': path.resolve(__dirname, 'src/utils/validation'),
     },
   },
 });

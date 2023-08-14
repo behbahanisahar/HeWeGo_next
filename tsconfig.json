@@ -33,6 +33,9 @@
       "@/components/*": [
         "src/components/*"
       ],
+      "@/validation/*": [
+        "src/utils/validation/*"
+      ],
     },
   },
   "include": ["src"],
