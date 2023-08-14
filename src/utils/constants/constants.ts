@@ -1,0 +1,1 @@
+export const siteUrl ="https://hewego.azurewebsites.net/";

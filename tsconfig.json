@@ -21,12 +21,21 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": [
-        "src/*"
+      "@/constants/*": [
+        "src/utils/constants/*"
       ],
-      "@/styles/*": [
-        "src/styles/*"
-      ]
+      "@/pages": [
+        "src/pages/*"
+      ],
+      "@/api/*": [
+        "src/api/axiosInstance/*"
+      ],
+      "@/components/*": [
+        "src/components/*"
+      ],
+      "@/validation/*": [
+        "src/utils/validation/*"
+      ],
     },
   },
   "include": ["src"],

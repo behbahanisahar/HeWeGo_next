@@ -1,19 +1,22 @@
-import { FC } from 'react';
-import { useRoutes, RouteObject } from 'react-router-dom';
-import Layout from '../templates/layouts';
-import LogIn from '../pages/login/login';
-
-
+import { FC } from "react";
+import { useRoutes, RouteObject } from "react-router-dom";
+import Layout from "../templates/layouts";
+import LogIn from "../pages/login/login";
+import SignUp from "../pages/signup/signup";
 
 const routeList: RouteObject[] = [
   {
-    path: '/',
+    path: "/",
     element: <Layout />,
     children: [
-        {
-            path: '/login',
-            element: <LogIn />,
-          },
+      {
+        path: "/login",
+        element: <LogIn />,
+      },
+      {
+        path: "/register",
+        element: <SignUp />,
+      },
     ],
   },
 ];
