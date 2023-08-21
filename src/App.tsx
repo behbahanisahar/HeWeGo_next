@@ -7,7 +7,7 @@ const App: FC = (): JSX.Element => {
   let theme = createTheme({
     palette: {
       primary: {
-        main: '#001C30',
+        main: '#000000',
       },
       secondary: {
         main: '#64CCC5',

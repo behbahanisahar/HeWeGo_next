@@ -10,6 +10,7 @@ export default defineConfig({
       '@/pages': path.resolve(__dirname, 'src/pages'),
       '@/components': path.resolve(__dirname, 'src/components'),
       '@/validation': path.resolve(__dirname, 'src/utils/validation'),
+      '@/images': path.resolve(__dirname, 'src/assets'),
     },
   },
 });
