@@ -1,29 +1,10 @@
 import { FC } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import RenderRouter from './routes';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './utils/theme/theme';
 
 const App: FC = (): JSX.Element => {
-  let theme = createTheme({
-    palette: {
-      primary: {
-        main: '#000000',
-      },
-      secondary: {
-        main: '#64CCC5',
-      },
-    },
-    
-  });
-  
-  theme = createTheme(theme, {
-    palette: {
-      info: {
-        main: theme.palette.secondary.main,
-      },
-    },
-  });
-
   return (
     <ThemeProvider theme={theme}>
     <Router>
