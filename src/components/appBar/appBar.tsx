@@ -12,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import './appBar-styles.css';
+import { Link } from 'react-router-dom';
 
 const settings = ['Profile', 'Logout'];
 
@@ -33,9 +34,12 @@ function ResponsiveAppBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const handleLogoutClick = () => {
+    handleCloseUserMenu();
+  };
 
   return (
-    <AppBar position="static" sx={{ alignItems: 'center' }}>
+    <AppBar color="primary"  position="static" sx={{ alignItems: 'center' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ mx: 20}}>
           {/* Logo on the Left */}
@@ -108,8 +112,6 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
             >
-              {/* Menu items for mobile */}
-              {/* Add your menu items here */}
             </Menu>
           </Box>
 
@@ -157,10 +159,19 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem
+                key={setting}
+                onClick={setting === 'Logout' ? handleLogoutClick : handleCloseUserMenu}
+              >
+                <Typography textAlign="center">
+                  {setting === 'Logout' ? (
+                    <Link to="/">Logout</Link>
+                  ) : (
+                    setting
+                  )}
+                </Typography>
+              </MenuItem>
+            ))}
             </Menu>
           </Box>
         </Toolbar>
