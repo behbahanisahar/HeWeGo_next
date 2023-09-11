@@ -1,34 +1,32 @@
 import { FC } from "react";
-import { useRoutes, RouteObject } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Layout from "../templates/layouts";
-import LogIn from "../pages/login/login";
-import SignUp from "../pages/signup/signup";
-import Home from "../pages/home/home";
+import LogIn from "@/pages/login/login";
+import SignUp from "@/pages/signup/signup";
+import Home from "@/pages/home/home";
+import ProfileEditableForm from "@/pages/profile/profileEditableForm";
+import Tour from "@/pages/tour/tour";
+import ProfileContainer from "@/pages/profile/profileContainer";
 
-const routeList: RouteObject[] = [
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        path: "/login",
-        element: <LogIn />,
-      },
-      {
-        path: "/register",
-        element: <SignUp />,
-      },
-      {
-        path: "/",
-        element: <Home />,
-      },
-    ],
-  },
+const routeList = [
+  { path: "login", element: <LogIn /> },
+  { path: "register", element: <SignUp /> },
+  { path: "/", element: <Home /> },
+  { path: "profile", element: <ProfileContainer /> },
+  { path: "profile/edit", element: <ProfileEditableForm /> },
+  { path: "tour", element: <Tour /> },
 ];
 
 const RenderRouter: FC = () => {
-  const element = useRoutes(routeList);
-  return element;
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {routeList.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
+      </Route>
+    </Routes>
+  );
 };
 
 export default RenderRouter;

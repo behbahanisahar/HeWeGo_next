@@ -12,10 +12,13 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useState } from "react";
-import { ILoginPostData, postLoginData } from "@/api/login/post";
+import { ILoginPostData, ILoginResponse, postLoginData } from "@/api/login/post";
 import { CopyRight } from "@/components/copyRight/copyRight";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function LogIn() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<ILoginPostData>({
     username: "",
     password: "",
@@ -30,7 +33,20 @@ function LogIn() {
     e.preventDefault();
 
     try {
-      await postLoginData(formData);
+        await postLoginData(formData).then((l:ILoginResponse)=>{
+        localStorage.setItem('userInfo', JSON.stringify(l.user));
+      })
+      toast('You are logged in successfully!', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
+      navigate('/tour');
     } catch (error) {
       setError(true);
     }
@@ -83,14 +99,15 @@ function LogIn() {
           <FormControlLabel
             control={<Checkbox value='remember' color='primary' />}
             label='Remember me'
-          />
+            />
+           {/* todo: should add logic for this */}
           <Button
             type='submit'
             fullWidth
             variant='contained'
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+              Sign In
           </Button>
           <Grid container>
             <Grid item xs>

@@ -1,10 +1,19 @@
 import { Container, Typography, Grid, Card, CardContent, CardMedia, Button } from '@material-ui/core';
 import './home.css';
 import {destinations} from "@/constants/constants";
-
-
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const handleExploreClick = () => {
+    const userInfoString = localStorage.getItem('userInfo');
+    if (!userInfoString) {
+      navigate('/login');
+    } else {
+      navigate('/tour');
+    }
+  };
+
   return (
     <Container className="container">
       <Typography variant="h4" className="heading">
@@ -37,7 +46,7 @@ const HomePage = () => {
         <Typography variant="body2" className="text-secondary">
           Discover a world of amazing places waiting for you to explore.
         </Typography>
-        <Button variant="outlined" className='explore-button'>
+        <Button variant="outlined" className='explore-button' onClick={handleExploreClick}>
           Explore Now
         </Button>
       </div>

@@ -11,6 +11,7 @@ export default defineConfig({
       '@/components': path.resolve(__dirname, 'src/components'),
       '@/validation': path.resolve(__dirname, 'src/utils/validation'),
       '@/images': path.resolve(__dirname, 'src/assets'),
+      '@/context': path.resolve(__dirname, 'src/context'),
     },
   },
 });
