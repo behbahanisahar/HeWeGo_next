@@ -6,6 +6,7 @@ let theme = createTheme({
       },
       secondary: {
         main: '#64CCC5',
+        contrastText: '#fff',
       },
     },
     

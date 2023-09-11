@@ -12,11 +12,12 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import './appBar-styles.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const settings = ['Profile', 'Logout'];
 
 function ResponsiveAppBar() {
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -35,9 +36,11 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
   const handleLogoutClick = () => {
+    localStorage.removeItem('userInfo');
     handleCloseUserMenu();
-  };
+    navigate('/login');
 
+  };
   return (
     <AppBar color="primary"  position="static" sx={{ alignItems: 'center' }}>
       <Container maxWidth="xl">
@@ -160,17 +163,17 @@ function ResponsiveAppBar() {
             >
               {settings.map((setting) => (
               <MenuItem
-                key={setting}
-                onClick={setting === 'Logout' ? handleLogoutClick : handleCloseUserMenu}
-              >
-                <Typography textAlign="center">
-                  {setting === 'Logout' ? (
-                    <Link to="/">Logout</Link>
-                  ) : (
-                    setting
-                  )}
-                </Typography>
-              </MenuItem>
+              key={setting}
+              onClick={setting === 'Logout' ? handleLogoutClick : handleCloseUserMenu}
+            >
+              <Typography textAlign="center">
+                {setting === 'Logout' ? (
+                  <Link to="/">Logout</Link>
+                ) : (
+                  <Link to="/profile">Profile</Link>
+                )}
+              </Typography>
+            </MenuItem>
             ))}
             </Menu>
           </Box>
