@@ -1,18 +1,19 @@
 import { siteUrl } from "@/constants/constants";
-import { Link, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 interface ICopyrightProps {
-    sx?: React.CSSProperties;
-  }
-export const CopyRight =({sx}: ICopyrightProps) =>{
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" sx={sx}>
-          {'Copyright © '}
-          <Link color="inherit" href={siteUrl}>
-          HeWeGo
-          </Link>{' '}
-          {new Date().getFullYear()}
-          {'.'}
-        </Typography>
-      );
+  className?: string;
 }
+
+export const CopyRight = ({ className }: ICopyrightProps) => {
+  return (
+    <p className={`text-sm text-muted-foreground text-center ${className || ""}`}>
+      {'Copyright © '}
+      <Link to={siteUrl} className="text-primary hover:underline">
+        HeWeGo
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </p>
+  );
+};

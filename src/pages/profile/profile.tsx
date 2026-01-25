@@ -1,20 +1,11 @@
-import {
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  Chip,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import EmailIcon from "@mui/icons-material/Email";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
-import EditIcon from "@mui/icons-material/Edit";
-import "./profile.css";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import IUserInfo from "src/entities/userinfo";
+import { User, Mail, MapPin, Edit } from "lucide-react";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState<IUserInfo>();
@@ -26,43 +17,44 @@ const Profile = () => {
       setUserInfo(parsedUserInfo);
     }
   }, []);
+
   return (
-    <div className='container'>
-      <Card>
-        <CardContent>
-          <div className='avatar-row'>
-            <Avatar className='avatar' sx={{ width: 60, height: 60 }}>
-              <PermIdentityIcon />
-            </Avatar>
-            <Typography gutterBottom variant='h5' component='div'>
-              {userInfo?.name}
-            </Typography>
-            <div className='edit-icon'>
-            <Link to="/profile/edit" target="_blank">
-              <IconButton aria-label='edit'>
-                <EditIcon />
-              </IconButton>
-            </Link>
+    <Card className="w-full">
+      <CardHeader>
+        <div className="flex items-center gap-4">
+          <Avatar className="h-16 w-16">
+            <AvatarFallback>
+              <User className="h-8 w-8" />
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <h2 className="text-2xl font-semibold">{userInfo?.name || "User"}</h2>
+          </div>
+          <Link to="/profile/edit" target="_blank">
+            <Button variant="ghost" size="icon">
+              <Edit className="h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">{userInfo?.email}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">{userInfo?.city}</span>
             </div>
           </div>
-        </CardContent>
-        <CardActions>
-          <div className='left-actions'>
-            <IconButton aria-label='add to favorites'>
-              <EmailIcon /> 
-            </IconButton>
-            {userInfo?.email}
-            <IconButton aria-label='share'>
-              <LocationCityIcon />
-            </IconButton>
-            {userInfo?.city}
+          <div>
+            <Badge variant="secondary">Guide</Badge>
           </div>
-          <div className='right-actions'>
-            <Chip label='Guide' color='secondary' />
-          </div>
-        </CardActions>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

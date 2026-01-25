@@ -5,7 +5,7 @@ let theme = createTheme({
         main: '#000000',
       },
       secondary: {
-        main: '#64CCC5',
+        main: '#493efb',
         contrastText: '#fff',
       },
     },

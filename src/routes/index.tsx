@@ -7,6 +7,7 @@ import Home from "@/pages/home/home";
 import ProfileEditableForm from "@/pages/profile/profileEditableForm";
 import Tour from "@/pages/tour/tour";
 import ProfileContainer from "@/pages/profile/profileContainer";
+import MyTour from "@/pages/myTour/myTour";
 
 const routeList = [
   { path: "login", element: <LogIn /> },
@@ -15,6 +16,8 @@ const routeList = [
   { path: "profile", element: <ProfileContainer /> },
   { path: "profile/edit", element: <ProfileEditableForm /> },
   { path: "tour", element: <Tour /> },
+  { path: "mytour", element: <MyTour /> },
+  { path: "tour/:page?/:per_page?", element: <Tour /> },
 ];
 
 const RenderRouter: FC = () => {

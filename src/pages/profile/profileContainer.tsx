@@ -1,25 +1,39 @@
-import { Grid, Paper } from "@mui/material";
-import "./profile.css";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Profile from "./profile";
 
 const ProfileContainer = () => {
   return (
-    <>
-      <Grid container className='user-container' spacing={4}>
-        <Grid item xs={12}>
-          <Profile />
-        </Grid>
-        <Grid item xs={4}>
-          <Paper>My tours</Paper>{" "}
-        </Grid>
-        <Grid item xs={4}>
-          <Paper>Favorites</Paper>
-        </Grid>
-        <Grid item xs={4}>
-          <Paper>Groups</Paper>
-        </Grid>
-      </Grid>
-    </>
+    <div className="container mx-auto px-4 sm:px-10 py-8 max-w-7xl">
+      <div className="mb-8">
+        <Profile />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>My Tours</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">View and manage your tours</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Favorites</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">Your favorite destinations</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Groups</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">Your travel groups</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

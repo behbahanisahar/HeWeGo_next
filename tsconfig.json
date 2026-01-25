@@ -45,6 +45,12 @@
       "@/context/*": [
         "src/context/*"
       ],
+      "@/lib/*": [
+        "src/lib/*"
+      ],
+      "@/components/ui/*": [
+        "src/components/ui/*"
+      ],
     },
   },
   "include": ["src"],

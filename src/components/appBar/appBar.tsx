@@ -1,185 +1,100 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import './appBar-styles.css';
 import { Link, useNavigate } from 'react-router-dom';
-
-const settings = ['Profile', 'Logout'];
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, User, LogOut } from 'lucide-react';
 
 function ResponsiveAppBar() {
   const navigate = useNavigate();
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [userMenuOpen, setUserMenuOpen] = React.useState(false);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
   const handleLogoutClick = () => {
-    localStorage.removeItem('userInfo');
-    handleCloseUserMenu();
+    localStorage.clear();
+    setUserMenuOpen(false);
     navigate('/login');
-
   };
+
   return (
-    <AppBar color="primary"  position="static" sx={{ alignItems: 'center' }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ mx: 20}}>
-          {/* Logo on the Left */}
-          <Box sx={{ display: 'flex', alignItems: 'center'}}>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <span className="text-lg font-bold">H</span>
+            </div>
+            <span className="hidden md:inline-block text-xl font-bold tracking-tight">
               HeWeGo
-            </Typography>
-            {/* Logo for Mobile */}
-            <AdbIcon
-              sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
-            />
-            <Typography
-              variant="h5"
-              noWrap
-              component="a"
-              href=""
-              sx={{
-                mr: 2,
-                display: { xs: 'flex', md: 'none' },
-                flexGrow: 1,
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
+            </span>
+            <span className="md:hidden text-lg font-bold tracking-tight">
               LOGO
-            </Typography>
-          </Box>
+            </span>
+          </Link>
+        </div>
 
-          {/* Nav menu icon for mobile */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-            >
-            </Menu>
-          </Box>
+        {/* Mobile Menu */}
+        <div className="flex md:hidden">
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <nav className="flex flex-col gap-4 mt-8">
+                {/* Add navigation items here if needed */}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
 
-          {/* Logo for mobile */}
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
+        {/* Desktop Navigation & User Menu */}
+        <div className="hidden md:flex items-center gap-4">
+          <nav className="flex items-center gap-6">
+            {/* Add navigation items here if needed */}
+          </nav>
+        </div>
 
-          {/* Avatar on the Right */}
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-              <MenuItem
-              key={setting}
-              onClick={setting === 'Logout' ? handleLogoutClick : handleCloseUserMenu}
-            >
-              <Typography textAlign="center">
-                {setting === 'Logout' ? (
-                  <Link to="/">Logout</Link>
-                ) : (
-                  <Link to="/profile">Profile</Link>
-                )}
-              </Typography>
-            </MenuItem>
-            ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+        {/* User Avatar Menu */}
+        <div className="flex items-center">
+          <DropdownMenu open={userMenuOpen} onOpenChange={setUserMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Avatar>
+                  <AvatarFallback>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
+                  <User className="h-4 w-4" />
+                  <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleLogoutClick}
+                className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </header>
   );
 }
 
