@@ -1,4 +1,4 @@
-import { Component, ReactNode } from "react";
+import React, { Component, ReactNode } from "react";
 import { AppContextState, Context } from "./AppContext";
 import IUserInfo from "src/entities/userinfo";
 import { getUserInfoAndFavorites } from "@/api/users/getInfo";
@@ -109,7 +109,7 @@ class AppContextProvider extends Component<AppContextProviderProps, AppContextSt
     this.setState({ userInfo: this.emptyUserinfo, favorites: [] });
   };
 
-  render(): JSX.Element {
+  render(): React.ReactElement {
     return (
       <Context.Provider
         value={{

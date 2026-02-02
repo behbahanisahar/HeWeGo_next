@@ -38,7 +38,8 @@ interface DropdownMenuTriggerProps extends React.ButtonHTMLAttributes<HTMLButton
 const DropdownMenuTrigger = React.forwardRef<
   HTMLButtonElement,
   DropdownMenuTriggerProps
->(({ className, onClick, asChild, children, ...props }, ref) => {
+>((props, ref) => {
+  const { className, onClick, asChild, children, ...restProps } = props
   const context = React.useContext(DropdownMenuContext)
   if (!context) throw new Error("DropdownMenuTrigger must be used within DropdownMenu")
 
@@ -48,20 +49,16 @@ const DropdownMenuTrigger = React.forwardRef<
   }
 
   if (asChild && React.isValidElement(children)) {
-    // Extract asChild from props to prevent it from being passed to DOM
-    const { asChild: _, ...restProps } = props
-    return React.cloneElement(children as React.ReactElement<any>, {
+    const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void; className?: string }>
+    return React.cloneElement(child, {
+      ...restProps,
       ref,
       onClick: (e: React.MouseEvent) => {
-        handleClick(e as any)
-        // Call original onClick if it exists
-        if (children.props.onClick) {
-          children.props.onClick(e)
-        }
+        handleClick(e as React.MouseEvent<HTMLButtonElement>)
+        child.props.onClick?.(e)
       },
-      className: cn(children.props.className, className),
-      ...restProps,
-    })
+      className: cn(child.props.className, className),
+    } as React.Attributes)
   }
 
   return (
@@ -77,10 +74,14 @@ const DropdownMenuTrigger = React.forwardRef<
 })
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger"
 
+interface DropdownMenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  align?: 'start' | 'end' | 'center';
+}
+
 const DropdownMenuContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+  DropdownMenuContentProps
+>(({ className, align = 'end', ...props }, ref) => {
   const context = React.useContext(DropdownMenuContext)
   if (!context) throw new Error("DropdownMenuContent must be used within DropdownMenu")
 
@@ -90,7 +91,10 @@ const DropdownMenuContent = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "absolute right-0 mt-2 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md z-50",
+        "absolute mt-2 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md z-50",
+        align === 'end' && "right-0",
+        align === 'start' && "left-0",
+        align === 'center' && "left-1/2 -translate-x-1/2",
         className
       )}
       {...props}
@@ -107,7 +111,8 @@ interface DropdownMenuItemProps extends React.HTMLAttributes<HTMLDivElement> {
 const DropdownMenuItem = React.forwardRef<
   HTMLDivElement,
   DropdownMenuItemProps
->(({ className, onSelect, onClick, asChild, children, ...props }, ref) => {
+>((props, ref) => {
+  const { className, onSelect, onClick, asChild, children, ...restProps } = props
   const context = React.useContext(DropdownMenuContext)
   
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -117,24 +122,20 @@ const DropdownMenuItem = React.forwardRef<
   }
 
   if (asChild && React.isValidElement(children)) {
-    // Extract asChild from props to prevent it from being passed to DOM
-    const { asChild: _, ...restProps } = props
-    return React.cloneElement(children as React.ReactElement<any>, {
+    const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void; className?: string }>
+    return React.cloneElement(child, {
+      ...restProps,
       ref,
       onClick: (e: React.MouseEvent) => {
-        handleClick(e as any)
-        // Call original onClick if it exists
-        if (children.props.onClick) {
-          children.props.onClick(e)
-        }
+        handleClick(e as React.MouseEvent<HTMLDivElement>)
+        child.props.onClick?.(e)
       },
       className: cn(
         "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        children.props.className,
+        child.props.className,
         className
       ),
-      ...restProps,
-    })
+    } as React.Attributes)
   }
 
   return (

@@ -23,7 +23,7 @@ export async function getAllTours(page: number, per_page: number): Promise<IAllT
   const rawItems = Array.isArray(data?.items)
     ? data.items
     : Array.isArray(data?.data?.items)
-      ? data.data.items
+      ? data?.data?.items ?? []
       : [];
   const items = normalizeTourItems(rawItems);
   return {

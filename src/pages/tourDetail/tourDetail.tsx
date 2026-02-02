@@ -39,7 +39,7 @@ const TourDetail = () => {
   const navigate = useNavigate();
   const [tour, setTour] = useState<IAllTourItems | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [_currentImageIndex, _setCurrentImageIndex] = useState(0);
   const [estimatedDuration, setEstimatedDuration] = useState<number | null>(null);
 
   useEffect(() => {
@@ -154,7 +154,7 @@ const TourDetail = () => {
                   {tour.average_rating.toFixed(1)}
                 </Badge>
               )}
-              {tour.tags?.slice(0, 2).map((tag, index) => (
+              {tour.tags?.slice(0, 2).map((tag: string, index: number) => (
                 <Badge key={index} variant="outline" className="text-sm">
                   {tag}
                 </Badge>
@@ -186,7 +186,7 @@ const TourDetail = () => {
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-4">{t('tours.tagsAndCategories')}</h2>
                   <div className="flex flex-wrap gap-2">
-                    {tour.tags.map((tag, index) => (
+                    {tour.tags.map((tag: string, index: number) => (
                       <Badge key={index} variant="secondary" className="text-sm py-1 px-3">
                         {tag}
                       </Badge>
@@ -224,8 +224,8 @@ const TourDetail = () => {
                   </div>
                   <div className="space-y-4">
                     {tour.places
-                      .sort((a, b) => a.order - b.order)
-                      .map((place, index) => (
+                      .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
+                      .map((place: ITourPlace, index: number) => (
                         <PlaceCard key={place.id} place={place} index={index} />
                       ))}
                   </div>

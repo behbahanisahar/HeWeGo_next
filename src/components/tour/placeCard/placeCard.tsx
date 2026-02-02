@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ITourPlace } from '@/entities/tourPlace';
+import { ITourPlace, ITourPlaceMedia } from '@/entities/tourPlace';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -57,7 +57,7 @@ export const PlaceCard = ({ place, index }: PlaceCardProps) => {
           )}
           {place.tags && place.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {place.tags.map((tag, i) => (
+              {place.tags.map((tag: string, i: number) => (
                 <Badge key={i} variant="outline" className="text-xs">
                   {tag}
                 </Badge>
@@ -79,7 +79,7 @@ export const PlaceCard = ({ place, index }: PlaceCardProps) => {
               <span>{t('tours.media')}</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {place.media.map((media, mediaIndex) => (
+              {place.media.map((media: ITourPlaceMedia, mediaIndex: number) => (
                 <div
                   key={mediaIndex}
                   className="relative aspect-square rounded-lg overflow-hidden bg-muted group cursor-pointer"

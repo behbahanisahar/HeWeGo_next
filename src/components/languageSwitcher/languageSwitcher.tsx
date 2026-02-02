@@ -27,8 +27,6 @@ export const LanguageSwitcher = () => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
-
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode);
     localStorage.setItem('i18nextLng', langCode);

@@ -39,8 +39,9 @@ export const TourMap = ({ latitude, longitude, cityName, tourName }: TourMapProp
         }
 
         // Initialize map if not already initialized
-        if (!mapRef.current) {
-          mapRef.current = L.map(mapContainerRef.current, {
+        const container = mapContainerRef.current
+        if (!mapRef.current && container) {
+          mapRef.current = L.map(container, {
             center: [latitude, longitude],
             zoom: 13,
             scrollWheelZoom: false,

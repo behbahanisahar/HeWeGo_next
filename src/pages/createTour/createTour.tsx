@@ -82,8 +82,9 @@ const CreateTour = () => {
           });
         } catch (_) {}
 
-        if (!mapRef.current) {
-          mapRef.current = L.map(mapContainerRef.current, {
+        const container = mapContainerRef.current
+        if (!mapRef.current && container) {
+          mapRef.current = L.map(container, {
             center: DEFAULT_MAP_CENTER,
             zoom: DEFAULT_MAP_ZOOM,
             scrollWheelZoom: true,

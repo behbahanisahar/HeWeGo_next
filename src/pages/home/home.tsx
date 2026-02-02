@@ -46,7 +46,7 @@ const HomePage = () => {
     let filtered = filterToursByLocation(
       allTours,
       searchQuery,
-      userLocation,
+      userLocation ?? undefined,
       shouldFilterByLocation ? 500 : undefined // Only apply distance filter if location enabled and no search
     );
 

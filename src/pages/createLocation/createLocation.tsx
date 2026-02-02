@@ -54,8 +54,9 @@ const CreateLocation = () => {
           });
         } catch (_) {}
 
-        if (!mapRef.current) {
-          mapRef.current = L.map(mapContainerRef.current, {
+        const container = mapContainerRef.current
+        if (!mapRef.current && container) {
+          mapRef.current = L.map(container, {
             center: DEFAULT_CENTER,
             zoom: DEFAULT_ZOOM,
             scrollWheelZoom: true,

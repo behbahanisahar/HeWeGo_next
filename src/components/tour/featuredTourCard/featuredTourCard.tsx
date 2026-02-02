@@ -35,11 +35,11 @@ export const FeaturedTourCard = ({ tour, index }: FeaturedTourCardProps) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
           
           {/* Rating Badge */}
-          {tour.average_rating > 0 && (
+          {tour.average_rating != null && tour.average_rating > 0 && (
             <div className="absolute top-3 left-3 z-30">
               <Badge className="bg-background/95 backdrop-blur-sm shadow-lg">
                 <Star className="h-3 w-3 fill-yellow-500 text-yellow-500 mr-1" />
-                <span className="text-xs font-semibold">{tour.average_rating.toFixed(1)}</span>
+                <span className="text-xs font-semibold">{(tour.average_rating as number).toFixed(1)}</span>
               </Badge>
             </div>
           )}
@@ -84,7 +84,7 @@ export const FeaturedTourCard = ({ tour, index }: FeaturedTourCardProps) => {
           </p>
           {tour.tags && tour.tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {tour.tags.slice(0, 3).map((tag, tagIndex) => (
+              {tour.tags.slice(0, 3).map((tag: string, tagIndex: number) => (
                 <Badge key={tagIndex} variant="outline" className="text-xs">
                   {tag}
                 </Badge>

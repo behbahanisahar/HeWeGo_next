@@ -1,75 +1,61 @@
-# Deploy HeWeGo to Azure Static Web Apps (testing)
+# Deploy HeWeGo (testing)
 
-## 1. Push to GitHub
-
-If you don't have a remote yet:
-
-```bash
-cd hewego-next
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-git push -u origin main
-```
-
-(Replace `YOUR_USERNAME` and `YOUR_REPO` with your GitHub org/repo. Create the repo on GitHub first if needed.)
-
-## 2. Create the Static Web App in Azure
-
-**Option A – Azure Portal**
-
-1. Go to [Azure Portal](https://portal.azure.com) → **Create a resource** → search **Static Web App** → **Create**.
-2. **Subscription** and **Resource group**: choose or create one (e.g. `hewego-test`).
-3. **Name**: e.g. `hewego-app`.
-4. **Plan type**: **Free** (good for testing).
-5. **Deployment details**:
-   - **Source**: GitHub.
-   - Sign in to GitHub if asked and **Authorize**.
-   - **Organization**, **Repository**, **Branch**: select your repo and `main`.
-   - **Build Presets**: **Custom**.
-   - **App location**: `/`
-   - **Output location**: `dist`
-   - **Build command** (optional if using GitHub Actions): leave default or `npm run build`.
-6. Click **Review + create** → **Create**.
-
-**Option B – Azure CLI**
-
-```bash
-# Login and set subscription if needed
-az login
-az account set --subscription "YOUR_SUBSCRIPTION_ID"
-
-# Create resource group (if needed)
-az group create --name hewego-test --location eastus2
-
-# Create Static Web App linked to GitHub (replace placeholders)
-az staticwebapp create \
-  --name hewego-app \
-  --resource-group hewego-test \
-  --source https://github.com/YOUR_USERNAME/YOUR_REPO \
-  --branch main \
-  --app-location "/" \
-  --output-location "dist" \
-  --location eastus2
-```
-
-## 3. Add the deployment token to GitHub
-
-After the Static Web App is created:
-
-1. In Azure Portal: open your **Static Web App** → **Overview** → copy **Deployment token** (or use **Manage deployment token**).
-2. In **GitHub**: repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
-3. **Name**: `AZURE_STATIC_WEB_APPS_API_TOKEN`
-4. **Value**: paste the deployment token → **Add secret**.
-
-The workflow (`.github/workflows/azure-static-web-apps.yml`) uses this secret. On the next push to `main`, or when you run the workflow manually (**Actions** → **Azure Static Web Apps** → **Run workflow**), it will build and deploy.
-
-## 4. Your app URL
-
-After the first successful run, the app will be at:
-
-`https://<your-static-web-app-name>.azurestaticapps.net`
-
-(e.g. `https://hewego-app.azurestaticapps.net`)
+Your app is a Vite + React SPA. Push your code to GitHub, then use one of the options below. All support **free tiers** and **GitHub deploy**.
 
 ---
 
-**Note:** The frontend calls `https://hewego.azurewebsites.net` for the API. If you need a different API URL in production, configure it via environment variables and your build (e.g. Vite `import.meta.env`).
+## Option 1: Vercel (recommended)
+
+1. Go to [vercel.com](https://vercel.com) and sign in with **GitHub**.
+2. **Add New** → **Project** → import your repo `HeWeGo_next`.
+3. Leave defaults:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+4. Click **Deploy**. Done.
+
+Your app will be at `https://hewego-next-xxx.vercel.app` (or your custom name).  
+SPA routing is handled by `vercel.json` in the repo.
+
+---
+
+## Option 2: Netlify
+
+1. Go to [netlify.com](https://netlify.com) and sign in with **GitHub**.
+2. **Add new site** → **Import an existing project** → **GitHub** → choose `HeWeGo_next`.
+3. Build settings (usually auto-filled from `netlify.toml`):
+   - **Build command**: `npm run build`
+   - **Publish directory**: `dist`
+4. Click **Deploy site**.
+
+Your app will be at `https://something.netlify.app`.  
+SPA routing is handled by `netlify.toml` in the repo.
+
+---
+
+## Option 3: GitHub Pages
+
+1. In **vite.config.ts** set `base: '/HeWeGo_next/'` (your repo name) for project pages.
+2. Add a GitHub Action to build and push to the `gh-pages` branch (or use `peaceiris/actions-gh-pages`).
+3. In repo **Settings** → **Pages** → Source: **GitHub Actions** (or `gh-pages` branch).
+
+URL will be `https://<username>.github.io/HeWeGo_next/`.
+
+---
+
+## Option 4: Cloudflare Pages
+
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
+2. Select your repo and branch (`main`).
+3. Build: **Framework preset** = None (or Vite), **Build command**: `npm run build`, **Build output**: `dist`.
+4. Add a **Redirect rule** so `/*` → `/index.html` (Status 200) for SPA routing.
+
+---
+
+## Option 5: Azure Static Web Apps
+
+See the workflow in `.github/workflows/azure-static-web-apps.yml`. Create a Static Web App in Azure, connect GitHub, and add the deployment token as repo secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+
+---
+
+**Note:** The frontend calls `https://hewego.azurewebsites.net` for the API. All of the above serve the same static files; only the host changes.

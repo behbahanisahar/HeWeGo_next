@@ -46,8 +46,9 @@ export const TourMapMultiPlace = ({ places, tourName, cityName }: TourMapMultiPl
           sortedPlaces.map(place => [place.latitude, place.longitude])
         );
 
-        if (!mapRef.current) {
-          mapRef.current = L.map(mapContainerRef.current, {
+        const container = mapContainerRef.current
+        if (!mapRef.current && container) {
+          mapRef.current = L.map(container, {
             scrollWheelZoom: false,
           });
 

@@ -51,6 +51,9 @@
       "@/lib/*": [
         "src/lib/*"
       ],
+      "@/entities/*": [
+        "src/entities/*"
+      ],
       "@/components/ui/*": [
         "src/components/ui/*"
       ],

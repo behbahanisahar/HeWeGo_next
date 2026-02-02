@@ -20,5 +20,3 @@ export interface ITourPlace {
   tags?: string[];
   average_rating?: number | null;
 }
-
-export type { ITourPlace as default };

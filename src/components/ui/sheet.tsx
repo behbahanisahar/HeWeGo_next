@@ -50,7 +50,8 @@ interface SheetTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement
 const SheetTrigger = React.forwardRef<
   HTMLButtonElement,
   SheetTriggerProps
->(({ className, onClick, asChild, children, ...props }, ref) => {
+>((props, ref) => {
+  const { className, onClick, asChild, children, ...restProps } = props
   const context = React.useContext(SheetContext)
   if (!context) throw new Error("SheetTrigger must be used within Sheet")
 
@@ -61,20 +62,16 @@ const SheetTrigger = React.forwardRef<
   }
 
   if (asChild && React.isValidElement(children)) {
-    // Extract asChild from props to prevent it from being passed to DOM
-    const { asChild: _, ...restProps } = props
-    return React.cloneElement(children as React.ReactElement<any>, {
+    const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void; className?: string }>
+    return React.cloneElement(child, {
+      ...restProps,
       ref,
       onClick: (e: React.MouseEvent) => {
-        handleClick(e as any)
-        // Call original onClick if it exists
-        if (children.props.onClick) {
-          children.props.onClick(e)
-        }
+        handleClick(e as React.MouseEvent<HTMLButtonElement>)
+        child.props.onClick?.(e)
       },
-      className: cn(children.props.className, className),
-      ...restProps,
-    })
+      className: cn(child.props.className, className),
+    } as React.Attributes)
   }
 
   return (

@@ -19,6 +19,8 @@ export const getSampleTours = (): IAllTourItems[] => {
         longitude: 2.3522,
         latitude: 48.8566
       } as ICity,
+      creator_id: null,
+      status_id: 1,
       places: [
         {
           id: 1,
@@ -88,6 +90,8 @@ export const getSampleTours = (): IAllTourItems[] => {
         longitude: 139.6917,
         latitude: 35.6895
       } as ICity,
+      creator_id: null,
+      status_id: 1,
       places: [
         {
           id: 5,
@@ -143,7 +147,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Greece",
         longitude: 25.4615,
         latitude: 36.3932
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 4,
@@ -158,7 +164,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "USA",
         longitude: -74.0060,
         latitude: 40.7128
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 5,
@@ -173,7 +181,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Indonesia",
         longitude: 115.1889,
         latitude: -8.4095
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 6,
@@ -188,7 +198,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "UK",
         longitude: -0.1278,
         latitude: 51.5074
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 7,
@@ -203,7 +215,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Italy",
         longitude: 12.4964,
         latitude: 41.9028
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 8,
@@ -218,7 +232,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "UAE",
         longitude: 55.2708,
         latitude: 25.2048
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 9,
@@ -233,7 +249,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Spain",
         longitude: 2.1734,
         latitude: 41.3851
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 10,
@@ -248,7 +266,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Iceland",
         longitude: -21.8278,
         latitude: 64.1466
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 11,
@@ -263,7 +283,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Morocco",
         longitude: -7.9811,
         latitude: 31.6295
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 12,
@@ -278,7 +300,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Australia",
         longitude: 151.2093,
         latitude: -33.8688
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 13,
@@ -293,7 +317,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Netherlands",
         longitude: 4.9041,
         latitude: 52.3676
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 14,
@@ -308,7 +334,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Czech Republic",
         longitude: 14.4378,
         latitude: 50.0755
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 15,
@@ -323,7 +351,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Egypt",
         longitude: 31.2357,
         latitude: 30.0444
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 16,
@@ -338,7 +368,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Portugal",
         longitude: -9.1393,
         latitude: 38.7223
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 17,
@@ -353,7 +385,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Thailand",
         longitude: 100.5018,
         latitude: 13.7563
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     },
     {
       id: 18,
@@ -368,7 +402,9 @@ export const getSampleTours = (): IAllTourItems[] => {
         country: "Austria",
         longitude: 16.3738,
         latitude: 48.2082
-      } as ICity
+      } as ICity,
+      creator_id: null,
+      status_id: 1
     }
   ];
 };

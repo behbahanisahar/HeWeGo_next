@@ -66,7 +66,7 @@ export const AllTours = () => {
     const filtered = filterToursByLocation(
       allToursData,
       searchQuery,
-      userLocation,
+      userLocation ?? undefined,
       shouldFilterByLocation ? 500 : undefined // Only apply distance filter if location enabled and no search
     );
 
@@ -103,7 +103,7 @@ export const AllTours = () => {
     }, 300);
   }, [filteredTours, page, itemsPerPage]);
 
-  const loadTours = useCallback(async (pageNum: number, append: boolean = false) => {
+  const loadTours = useCallback(async (pageNum: number, _append: boolean = false) => {
     if (loading) return;
     setPage(pageNum);
   }, [loading]);

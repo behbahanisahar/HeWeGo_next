@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ITour from "./tour";
+import { ITour } from "./tour";
 
 export default interface IUserInfo{
     id: number;
