@@ -67,9 +67,10 @@ const TourDetail = () => {
         const rawLocations = Array.isArray(data?.locations) ? data.locations : [];
         const places = mapLocationsToPlaces(rawLocations);
         const cityId = data?.city_id ?? data?.city?.id;
+        const cityIdFromObj = data?.city?.id;
         const resolvedCity =
           (cityId != null && list.find((c) => c.id === Number(cityId))) ||
-          (data?.city?.id != null && list.find((c) => c.id === Number(data.city.id))) ||
+          (cityIdFromObj != null && list.find((c) => c.id === Number(cityIdFromObj))) ||
           data?.city ||
           defaultCity;
         const tourFromApi: IAllTourItems = {

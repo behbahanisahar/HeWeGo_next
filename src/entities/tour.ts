@@ -50,7 +50,9 @@ export interface ITourLocation {
 export interface ITourDetailResponse {
   id: number;
   name: string;
-  city: ICity;
+  /** API may return city object and/or city_id */
+  city?: ICity;
+  city_id?: number;
   description: string | null;
   creator_id: number | null;
   status_id: number;
