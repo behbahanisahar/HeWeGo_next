@@ -1,22 +1,16 @@
 import { AllTours } from "@/components/tour/allTour/allTours";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const Tour = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-8">
-        <Link to="/my-tour">
-          <Button variant="ghost" className="mb-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            My tours
-          </Button>
-        </Link>
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Tours</h1>
-          <p className="text-muted-foreground">Explore our amazing tours</p>
-        </div>
+      <div className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold mb-3">{t('tours.title')}</h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          {t('tours.subtitle')}
+        </p>
       </div>
       <div className="max-w-6xl mx-auto">
         <AllTours />

@@ -1,22 +1,26 @@
+import { useContext, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import IUserInfo from "src/entities/userinfo";
+import { Link, useNavigate } from "react-router-dom";
 import { User, Mail, MapPin, Edit } from "lucide-react";
+import { Context } from "@/context/AppContext";
 
 const Profile = () => {
-  const [userInfo, setUserInfo] = useState<IUserInfo>();
-  useEffect(() => {
-    const userInfoString = localStorage.getItem('userInfo');
+  const appContext = useContext(Context);
+  const userInfo = appContext?.state.userInfo;
+  const navigate = useNavigate();
 
-    if (userInfoString) {
-      const parsedUserInfo = JSON.parse(userInfoString);
-      setUserInfo(parsedUserInfo);
+  useEffect(() => {
+    if (userInfo?.id === undefined || userInfo?.id === 0) {
+      navigate("/login", { replace: true });
     }
-  }, []);
+  }, [userInfo?.id, navigate]);
+
+  if (userInfo?.id === undefined || userInfo?.id === 0) {
+    return null;
+  }
 
   return (
     <Card className="w-full">
@@ -30,7 +34,7 @@ const Profile = () => {
           <div className="flex-1">
             <h2 className="text-2xl font-semibold">{userInfo?.name || "User"}</h2>
           </div>
-          <Link to="/profile/edit" target="_blank">
+          <Link to="/profile/edit">
             <Button variant="ghost" size="icon">
               <Edit className="h-5 w-5" />
             </Button>
@@ -50,7 +54,7 @@ const Profile = () => {
             </div>
           </div>
           <div>
-            <Badge variant="secondary">Guide</Badge>
+            <Badge variant="secondary">{userInfo?.role ?? "user"}</Badge>
           </div>
         </div>
       </CardContent>

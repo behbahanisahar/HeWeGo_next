@@ -1,39 +1,45 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { CopyRight } from "@/components/copyRight/copyRight";
-import { IProfilePostData } from "@/api/profile/post";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Edit } from "lucide-react";
-import IUserInfo from "src/entities/userinfo";
+import { useTranslation } from 'react-i18next';
+import { Context } from "@/context/AppContext";
+import { updateUserInfo, IUpdateUserInfoPayload } from "@/api/users/putInfo";
 
 const ProfileEditableForm = () => {
-  const [formData, setFormData] = useState<IProfilePostData>({
+  const { t } = useTranslation();
+  const appContext = useContext(Context);
+  const userInfo = appContext?.state.userInfo;
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState<IUpdateUserInfoPayload>({
     name: "",
     email: "",
-    city: '',
+    city: "",
   });
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
-    const userInfoString = localStorage.getItem('userInfo');
-    if (userInfoString) {
-      const parsedUserInfo: IUserInfo = JSON.parse(userInfoString);
+    if (userInfo?.id) {
       setFormData({
-        name: parsedUserInfo.name || "",
-        email: parsedUserInfo.email || "",
-        city: parsedUserInfo.city || "",
+        name: userInfo.name || "",
+        email: userInfo.email || "",
+        city: userInfo.city || "",
       });
     }
-  }, []);
+  }, [userInfo?.id, userInfo?.name, userInfo?.email, userInfo?.city]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setError(false);
   };
 
@@ -41,15 +47,39 @@ const ProfileEditableForm = () => {
     e.preventDefault();
     setError(false);
     setLoading(true);
-    // TODO: Implement actual API call
-    setTimeout(() => {
+    try {
+      const updatedUser = await updateUserInfo(formData);
+
+      // Merge updated fields into existing user so we never lose the id or other properties,
+      // even if the API returns only partial data (e.g. just the changed fields or a message).
+      const mergedUser = {
+        ...(appContext?.state.userInfo ?? {}),
+        ...updatedUser,
+        ...formData,
+      };
+
+      appContext?.actions.setUserInfo(mergedUser as typeof appContext.state.userInfo);
+
+      // Persist updated user to same storage as token
+      const tokenInLocal = localStorage.getItem("access_token");
+      const storage = tokenInLocal ? localStorage : sessionStorage;
+      storage.setItem("userInfo", JSON.stringify(mergedUser));
+      setMessage(t("profile.saved") ?? "Profile saved");
+
+      // After successful save, go back to profile page
+      navigate("/profile", { replace: true });
+    } catch {
+      setError(true);
+      setMessage(t("profile.checkInputs") ?? "Please check your inputs");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
-    <div className="container mx-auto flex min-h-screen items-center justify-center px-4 py-16">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col">
+      <div className="container mx-auto flex flex-1 items-center justify-center px-4 py-16">
+        <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <Avatar className="h-12 w-12 bg-primary">
@@ -58,15 +88,15 @@ const ProfileEditableForm = () => {
               </AvatarFallback>
             </Avatar>
           </div>
-          <CardTitle className="text-2xl font-bold">Edit Profile</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('profile.editProfile')}</CardTitle>
           <CardDescription>
-            Update your profile information
+            {t('profile.updateInfo')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t('profile.name')}</Label>
               <Input
                 id="name"
                 name="name"
@@ -76,11 +106,11 @@ const ProfileEditableForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className={error ? "border-destructive" : ""}
-                placeholder="Enter your name"
+                placeholder={t('profile.name')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">{t('profile.email')}</Label>
               <Input
                 id="email"
                 name="email"
@@ -94,7 +124,7 @@ const ProfileEditableForm = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
+              <Label htmlFor="city">{t('profile.city')}</Label>
               <Input
                 id="city"
                 name="city"
@@ -103,12 +133,12 @@ const ProfileEditableForm = () => {
                 value={formData.city}
                 onChange={handleChange}
                 className={error ? "border-destructive" : ""}
-                placeholder="Enter your city"
+                placeholder={t('profile.city')}
               />
             </div>
-            {error && (
-              <p className="text-sm text-destructive">
-                Please check your inputs and try again.
+            {message && (
+              <p className={`text-sm ${error ? "text-destructive" : "text-emerald-600"}`}>
+                {message}
               </p>
             )}
             <Button
@@ -116,12 +146,13 @@ const ProfileEditableForm = () => {
               className="w-full"
               disabled={loading}
             >
-              {loading ? "Saving..." : "Submit"}
+              {loading ? t('profile.saving') : t('profile.submit')}
             </Button>
           </form>
         </CardContent>
       </Card>
-      <div className="absolute bottom-4 left-0 right-0">
+      </div>
+      <div className="py-4">
         <CopyRight />
       </div>
     </div>

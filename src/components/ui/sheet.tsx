@@ -1,4 +1,5 @@
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 
 interface SheetContextValue {
@@ -42,16 +43,38 @@ const Sheet = React.forwardRef<
 })
 Sheet.displayName = "Sheet"
 
+interface SheetTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean
+}
+
 const SheetTrigger = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, onClick, ...props }, ref) => {
+  SheetTriggerProps
+>(({ className, onClick, asChild, children, ...props }, ref) => {
   const context = React.useContext(SheetContext)
   if (!context) throw new Error("SheetTrigger must be used within Sheet")
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     context.setOpen(!context.open)
     onClick?.(e)
+  }
+
+  if (asChild && React.isValidElement(children)) {
+    // Extract asChild from props to prevent it from being passed to DOM
+    const { asChild: _, ...restProps } = props
+    return React.cloneElement(children as React.ReactElement<any>, {
+      ref,
+      onClick: (e: React.MouseEvent) => {
+        handleClick(e as any)
+        // Call original onClick if it exists
+        if (children.props.onClick) {
+          children.props.onClick(e)
+        }
+      },
+      className: cn(children.props.className, className),
+      ...restProps,
+    })
   }
 
   return (
@@ -60,7 +83,9 @@ const SheetTrigger = React.forwardRef<
       className={cn("outline-none", className)}
       onClick={handleClick}
       {...props}
-    />
+    >
+      {children}
+    </button>
   )
 })
 SheetTrigger.displayName = "SheetTrigger"
@@ -71,31 +96,40 @@ const SheetContent = React.forwardRef<
 >(({ className, side = "right", children, ...props }, ref) => {
   const context = React.useContext(SheetContext)
   if (!context) throw new Error("SheetContent must be used within Sheet")
+  const [mounted, setMounted] = React.useState(false)
 
-  if (!context.open) return null
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
-  return (
+  if (!context.open || !mounted) return null
+
+  const content = (
     <>
       <div
-        className="fixed inset-0 z-50 bg-black/80"
+        className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm"
         onClick={() => context.setOpen(false)}
+        aria-hidden="true"
       />
       <div
         ref={ref}
         className={cn(
-          "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out",
-          side === "right" && "right-0 top-0 h-full w-3/4 border-l sm:max-w-sm",
-          side === "left" && "left-0 top-0 h-full w-3/4 border-r sm:max-w-sm",
+          "fixed z-[100] bg-background shadow-2xl transition-transform duration-300 ease-in-out",
+          side === "right" && "right-0 top-0 h-full w-full max-w-sm border-l",
+          side === "left" && "left-0 top-0 h-full w-full max-w-sm border-r",
           side === "top" && "top-0 left-0 w-full border-b",
           side === "bottom" && "bottom-0 left-0 w-full border-t",
           className
         )}
+        onClick={(e) => e.stopPropagation()}
         {...props}
       >
         {children}
       </div>
     </>
   )
+
+  return createPortal(content, document.body)
 })
 SheetContent.displayName = "SheetContent"
 

@@ -2,17 +2,21 @@ import { FC } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import RenderRouter from "./routes";
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
+import { ThemeProvider } from './components/theme/theme-provider';
+import AppContextProvider from './context/AppContextProvider';
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const App: FC = (): JSX.Element => {
- //to do: should check if user not login yet, could not change routes
   return (
-    <>
-      <Router>
-        <RenderRouter />
-      </Router>
-      <ToastContainer autoClose={8000} />
-    </>
+    <ThemeProvider defaultTheme="system" storageKey="hewego-ui-theme">
+      <AppContextProvider>
+        <ErrorBoundary>
+          <Router>
+            <RenderRouter />
+          </Router>
+        </ErrorBoundary>
+      </AppContextProvider>
+    </ThemeProvider>
   );
 };
 export default App;

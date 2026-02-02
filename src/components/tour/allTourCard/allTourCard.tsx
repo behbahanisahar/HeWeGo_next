@@ -1,4 +1,5 @@
 import { IAllTourItems } from "src/entities/tour";
+import homepage from "@/images/homepage.jpg";
 import img2 from "@/images/homepage2.jpg";
 import img3 from "@/images/homepage3.jpg";
 import { useState } from "react";
@@ -6,15 +7,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { getPriceDisplay, formatPriceDisplay } from "@/utils/tourPrice";
 
 interface AllTourCardProps {
-  tour: IAllTourItems;
+  tour: IAllTourItems & { distance?: number };
 }
 
 export const AllTourCard = ({ tour }: AllTourCardProps) => {
-  const images = [img2, img3];
-  const [currentImage, setCurrentImage] = useState(0);
+  const { t } = useTranslation();
+  const images = [homepage, img2, img3];
+  const [currentImage, setCurrentImage] = useState(tour.id % images.length);
+  const priceDisplay = formatPriceDisplay(getPriceDisplay(tour.prices), t);
 
   const handleNextImage = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -65,8 +70,20 @@ export const AllTourCard = ({ tour }: AllTourCardProps) => {
               {tour.description || "No description available"}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {tour.tags?.map((tag: string, index: number) => (
+          <div className="flex flex-wrap gap-2 items-center">
+            <Badge variant="outline" className="text-xs font-medium">
+              {priceDisplay}
+            </Badge>
+            {tour.city && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                <span>{tour.city.name}</span>
+                {tour.distance !== undefined && (
+                  <span className="ml-1 text-xs">({tour.distance.toFixed(1)} km)</span>
+                )}
+              </Badge>
+            )}
+            {tour.tags?.slice(0, 2).map((tag: string, index: number) => (
               <Badge key={index} variant="outline">
                 {tag}
               </Badge>

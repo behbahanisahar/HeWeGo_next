@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllTours } from "@/api/tour/get";
 import { IAllTourItems } from "src/entities/tour";
 import { MyTourCard } from "../myTourCard/myTourCard";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Pagination } from "@/components/ui/pagination";
 
 export const AllMyTours = () => {
@@ -11,11 +11,11 @@ export const AllMyTours = () => {
   const itemsPerPage = 10;
   const totalNumberOfTours = 100;
   const navigate = useNavigate();
-  const { page, per_page } = useParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const pageParam = page ? parseInt(page, 10) : 1;
-    const perPageParam = per_page ? parseInt(per_page, 10) : itemsPerPage;
+    const pageParam = searchParams.get('page') ? parseInt(searchParams.get('page')!, 10) : 1;
+    const perPageParam = searchParams.get('per_page') ? parseInt(searchParams.get('per_page')!, 10) : itemsPerPage;
 
     setCurrentPage(pageParam);
 
@@ -26,10 +26,10 @@ export const AllMyTours = () => {
       .catch((error) => {
         console.error("Error fetching tours:", error);
       });
-  }, [page, per_page]);
+  }, [searchParams]);
 
   const handlePageChange = (page: number) => {
-    navigate(`/tour/${page}/${itemsPerPage}`);
+    navigate(`/mytour?page=${page}&per_page=${itemsPerPage}`);
   };
 
   const totalPages = Math.ceil(totalNumberOfTours / itemsPerPage);

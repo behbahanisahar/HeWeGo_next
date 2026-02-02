@@ -1,6 +1,27 @@
+/* Leaflet Map Styles - must be before @tailwind */
+@import 'leaflet/dist/leaflet.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark mode support for Leaflet */
+.dark .leaflet-container {
+  background: hsl(var(--muted));
+}
+
+.dark .leaflet-tile {
+  filter: brightness(0.8) invert(1) hue-rotate(180deg);
+}
+
+.dark .leaflet-popup-content-wrapper {
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+}
+
+.dark .leaflet-popup-tip {
+  background: hsl(var(--card));
+}
 
 @layer base {
   :root {
@@ -80,6 +101,37 @@
   }
 }
 
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="rtl"] .flex {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+[dir="rtl"] .ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: 0;
+  margin-left: auto;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -89,9 +141,22 @@
   margin-top: 5px;
   margin-bottom: 5px;
   border-radius: 10px;
+  background: hsl(var(--muted));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cccccc;
+  background: hsl(var(--muted-foreground) / 0.3);
   border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.6);
 }

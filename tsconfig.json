@@ -36,6 +36,9 @@
       "@/validation/*": [
         "src/utils/validation/*"
       ],
+      "@/utils/*": [
+        "src/utils/*"
+      ],
       "@/images/*": [
         "src/assets/*"
       ],
