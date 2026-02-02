@@ -1,5 +1,3 @@
-import ICity from "./city";
-
 export interface ITourPlaceMedia {
   id?: number;
   type: 'image' | 'audio' | 'video';
@@ -23,4 +21,4 @@ export interface ITourPlace {
   average_rating?: number | null;
 }
 
-export default interface ITourPlace;
+export type { ITourPlace as default };
