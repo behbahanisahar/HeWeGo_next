@@ -6,9 +6,11 @@ export interface ILoginPostData {
   password: string;
 }
 export interface ILoginResponse {
-  access_token:string;
-  role:string;
-  user:IUserInfo;
+  access_token: string;
+  role: string;
+  user: IUserInfo;
+  /** If the backend supports token refresh, include this so we can get a new access_token when it expires. */
+  refresh_token?: string;
 }
 export async function postLoginData(data: ILoginPostData): Promise<ILoginResponse> {
   try {

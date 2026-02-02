@@ -4,6 +4,7 @@ import IUserInfo from "src/entities/userinfo";
 import { getUserInfoAndFavorites } from "@/api/users/getInfo";
 
 const AUTH_TOKEN_KEY = "access_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
 const USER_INFO_KEY = "userInfo";
 const getStorage = (rememberMe?: boolean): Storage =>
   rememberMe ? localStorage : sessionStorage;
@@ -85,16 +86,20 @@ class AppContextProvider extends Component<AppContextProviderProps, AppContextSt
     user: IUserInfo,
     accessToken: string,
     _role: string,
-    rememberMe: boolean = true
+    rememberMe: boolean = true,
+    refreshToken?: string
   ): void => {
     // ensure we don't leave stale auth in the other storage
     localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_INFO_KEY);
     sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(USER_INFO_KEY);
 
     const storage = getStorage(rememberMe);
     storage.setItem(AUTH_TOKEN_KEY, accessToken);
+    if (refreshToken) storage.setItem(REFRESH_TOKEN_KEY, refreshToken);
     storage.setItem(USER_INFO_KEY, JSON.stringify(user));
     this.setState({ userInfo: user, favorites: [] });
     // refresh to get latest user + favorites from server
@@ -103,8 +108,10 @@ class AppContextProvider extends Component<AppContextProviderProps, AppContextSt
 
   clearAuth = (): void => {
     localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_INFO_KEY);
     sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(USER_INFO_KEY);
     this.setState({ userInfo: this.emptyUserinfo, favorites: [] });
   };

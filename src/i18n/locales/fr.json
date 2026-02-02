@@ -66,14 +66,25 @@
     "stop": "Arrêt",
     "stops": "Arrêts",
     "createTour": "Créer une visite",
+    "createTourSubtitle": "Créez une nouvelle visite avec nom, ville, description, tags, prix, durée et vos lieux (ou créez-en sur la carte).",
     "createTourName": "Nom de la visite",
+    "tourNamePlaceholder": "ex. Cité de Londres",
     "createTourCity": "Ville",
+    "citySearchPlaceholder": "Rechercher des villes...",
     "createTourExplanation": "Description / Explication",
+    "explanationPlaceholder": "ex. Parcourez la Cité historique de Londres",
+    "estimatedDurationPlaceholder": "ex. 120",
+    "estimatedDurationHint": "Selon les lieux sélectionnés (30 min par lieu). Vous pouvez modifier.",
+    "minutes": "minutes",
+    "pricePlaceholder": "0 pour gratuit, ou montant",
+    "tagsPlaceholder": "ex. histoire, Londres",
     "createTourNameRequired": "Veuillez entrer un nom de visite.",
     "createTourCityRequired": "Veuillez sélectionner une ville.",
     "createTourError": "Échec de la création de la visite. Veuillez réessayer.",
     "tags": "Tags",
     "selectCity": "Sélectionner une ville",
+    "searchCity": "Rechercher des villes...",
+    "noCityFound": "Aucune ville trouvée.",
     "myCreatedTours": "Mes visites créées",
     "nearbyTours": "Visites près de vous",
     "selectLocation": "Sélectionner un emplacement",
@@ -84,6 +95,11 @@
     "tourCreated": "Visite créée avec succès!",
     "userCreated": "Visite créée par l'utilisateur",
     "media": "Médias"
+  },
+  "auth": {
+    "signInRequired": "Connexion requise",
+    "signInToAccess": "Veuillez vous connecter ou créer un compte pour accéder à cette page.",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
   },
   "login": {
     "title": "Se connecter",
@@ -142,7 +158,11 @@
     "selectedPoint": "Point sélectionné",
     "coordinates": "Coordonnées",
     "yourLocations": "Vos lieux",
-    "noLocations": "Vous n'avez pas encore de lieux. Cliquez sur la carte ci-dessus pour en créer un."
+    "noLocations": "Vous n'avez pas encore de lieux. Cliquez sur la carte ci-dessus pour en créer un.",
+    "mapSearchPlaceholder": "Rechercher un lieu ou une adresse...",
+    "search": "Rechercher",
+    "searchNotFound": "Lieu introuvable. Essayez une autre recherche.",
+    "searchError": "Recherche échouée. Réessayez."
   },
   "location": {
     "searchPlaceholder": "Rechercher par ville ou pays...",

@@ -5,7 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Star, MapPin, Users, DollarSign, Clock, Route } from 'lucide-react';
 import { getTourById } from '@/api/tour/get';
+import { getAllCities } from '@/api/cities/get';
 import { IAllTourItems, ITourLocation } from '@/entities/tour';
+import type ICity from '@/entities/city';
 import type { ITourPlace } from '@/entities/tourPlace';
 import { useTranslation } from 'react-i18next';
 import { TourMap } from '@/components/map/tourMap';
@@ -39,6 +41,7 @@ const TourDetail = () => {
   const navigate = useNavigate();
   const [tour, setTour] = useState<IAllTourItems | null>(null);
   const [loading, setLoading] = useState(true);
+  const [cities, setCities] = useState<ICity[]>([]);
   const [_currentImageIndex, _setCurrentImageIndex] = useState(0);
   const [estimatedDuration, setEstimatedDuration] = useState<number | null>(null);
 
@@ -48,23 +51,31 @@ const TourDetail = () => {
       return;
     }
 
-    // Always load tour from single-tour API (GET /api/tours/:id) when opening from list or homepage
-    getTourById(id)
-      .then((data) => {
+    const defaultCity: ICity = {
+      id: 0,
+      name: '',
+      country: '',
+      longitude: 0,
+      latitude: 0,
+    };
+
+    // Fetch tour and cities in parallel; resolve tour city from GET /api/all_cities
+    Promise.all([getTourById(id), getAllCities()])
+      .then(([data, citiesList]) => {
+        const list = Array.isArray(citiesList) ? citiesList : [];
+        setCities(list);
         const rawLocations = Array.isArray(data?.locations) ? data.locations : [];
         const places = mapLocationsToPlaces(rawLocations);
-        const defaultCity = {
-          id: 0,
-          name: '',
-          country: '',
-          longitude: 0,
-          latitude: 0,
-        };
-        // Tour uses description from API (not explanation; explanation is for each location)
+        const cityId = data?.city_id ?? data?.city?.id;
+        const resolvedCity =
+          (cityId != null && list.find((c) => c.id === Number(cityId))) ||
+          (data?.city?.id != null && list.find((c) => c.id === Number(data.city.id))) ||
+          data?.city ||
+          defaultCity;
         const tourFromApi: IAllTourItems = {
           id: data?.id ?? Number(id) ?? 0,
           name: data?.name ?? '',
-          city: data?.city ?? defaultCity,
+          city: resolvedCity && resolvedCity.id ? resolvedCity : defaultCity,
           description: data?.description ?? null,
           creator_id: data?.creator_id ?? null,
           status_id: data?.status_id ?? 0,
@@ -250,13 +261,30 @@ const TourDetail = () => {
                   </p>
                 </div>
 
-                {tour.city && (
+                {(tour.city || cities.length > 0) && (
                   <div className="space-y-2 pt-4 border-t">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="h-4 w-4" />
                       <span className="text-sm">{t('tours.location')}</span>
                     </div>
-                    <p className="font-medium">{tour.city.name}</p>
+                    {cities.length > 0 ? (
+                      <select
+                        value={tour.city?.id ?? ''}
+                        disabled
+                        className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-default disabled:opacity-100"
+                        aria-label={t('tours.location')}
+                      >
+                        <option value="">{t('tours.selectCity')}</option>
+                        {cities.map((city) => (
+                          <option key={city.id} value={city.id}>
+                            {city.name}
+                            {city.country ? `, ${city.country.trim()}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p className="font-medium">{tour.city?.name ?? '—'}</p>
+                    )}
                   </div>
                 )}
 

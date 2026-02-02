@@ -13,6 +13,7 @@ const DropdownMenu = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement> & { open?: boolean; onOpenChange?: (open: boolean) => void }
 >(({ className, open: controlledOpen, onOpenChange, children, ...props }, ref) => {
   const [internalOpen, setInternalOpen] = React.useState(false)
+  const containerRef = React.useRef<HTMLDivElement>(null)
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
   const setOpen = React.useCallback((newOpen: boolean) => {
     if (controlledOpen === undefined) {
@@ -21,9 +22,35 @@ const DropdownMenu = React.forwardRef<
     onOpenChange?.(newOpen)
   }, [controlledOpen, onOpenChange])
 
+  const mergedRef = React.useCallback(
+    (el: HTMLDivElement | null) => {
+      (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+      if (typeof ref === 'function') ref(el)
+      else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = el
+    },
+    [ref]
+  )
+
+  // Close when clicking outside
+  React.useEffect(() => {
+    if (!open) return
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      const el = containerRef.current
+      if (el && !el.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [open, setOpen])
+
   return (
     <DropdownMenuContext.Provider value={{ open, setOpen }}>
-      <div ref={ref} className={cn("relative", className)} {...props}>
+      <div ref={mergedRef} className={cn("relative inline-flex", className)} {...props}>
         {children}
       </div>
     </DropdownMenuContext.Provider>
@@ -91,10 +118,10 @@ const DropdownMenuContent = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "absolute mt-2 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md z-50",
-        align === 'end' && "right-0",
-        align === 'start' && "left-0",
-        align === 'center' && "left-1/2 -translate-x-1/2",
+        "absolute top-full left-0 mt-2 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md z-50",
+        align === 'end' && "left-auto right-0",
+        align === 'start' && "right-auto left-0",
+        align === 'center' && "left-1/2 right-auto -translate-x-1/2",
         className
       )}
       {...props}

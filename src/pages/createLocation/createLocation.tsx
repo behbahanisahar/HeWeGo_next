@@ -162,6 +162,7 @@ const CreateLocation = () => {
         latitude: String(selectedLat),
         longitude: String(selectedLng),
         explanation: explanation.trim() || '',
+        tags: [],
       });
       const newLoc: CreatedLocation = {
         id: result?.id,

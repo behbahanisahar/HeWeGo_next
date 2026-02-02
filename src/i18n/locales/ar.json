@@ -66,14 +66,25 @@
     "stop": "محطة",
     "stops": "محطات",
     "createTour": "إنشاء جولة",
+    "createTourSubtitle": "أنشئ جولة جديدة بالاسم والمدينة والوصف والعلامات والسعر والمدة، وأضف مواقعك (أو أنشئ أخرى على الخريطة).",
     "createTourName": "اسم الجولة",
+    "tourNamePlaceholder": "مثال: مدينة لندن",
     "createTourCity": "المدينة",
+    "citySearchPlaceholder": "البحث عن المدن...",
     "createTourExplanation": "الوصف / الشرح",
+    "explanationPlaceholder": "مثال: تجول في المدينة التاريخية في لندن",
+    "estimatedDurationPlaceholder": "مثال: 120",
+    "estimatedDurationHint": "حسب المواقع المختارة (30 دقيقة لكل مكان). يمكنك تغيير ذلك.",
+    "minutes": "دقائق",
+    "pricePlaceholder": "0 للمجاني، أو أدخل المبلغ",
+    "tagsPlaceholder": "مثال: تاريخ، لندن",
     "createTourNameRequired": "يرجى إدخال اسم الجولة.",
     "createTourCityRequired": "يرجى اختيار المدينة.",
     "createTourError": "فشل إنشاء الجولة. يرجى المحاولة مرة أخرى.",
     "tags": "العلامات",
     "selectCity": "اختر المدينة",
+    "searchCity": "البحث عن المدن...",
+    "noCityFound": "لم يتم العثور على مدينة.",
     "myCreatedTours": "جولاتي المنشأة",
     "nearbyTours": "الجولات القريبة منك",
     "selectLocation": "اختر الموقع",
@@ -84,6 +95,11 @@
     "tourCreated": "تم إنشاء الجولة بنجاح!",
     "userCreated": "جولة منشأة من قبل المستخدم",
     "media": "الوسائط"
+  },
+  "auth": {
+    "signInRequired": "تسجيل الدخول مطلوب",
+    "signInToAccess": "يرجى تسجيل الدخول أو إنشاء حساب للوصول إلى هذه الصفحة.",
+    "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى."
   },
   "login": {
     "title": "تسجيل الدخول",
@@ -142,7 +158,11 @@
     "selectedPoint": "النقطة المحددة",
     "coordinates": "الإحداثيات",
     "yourLocations": "مواقعك",
-    "noLocations": "ليس لديك أي مواقع بعد. انقر على الخريطة أعلاه لإنشاء واحد."
+    "noLocations": "ليس لديك أي مواقع بعد. انقر على الخريطة أعلاه لإنشاء واحد.",
+    "mapSearchPlaceholder": "البحث عن مكان أو عنوان...",
+    "search": "بحث",
+    "searchNotFound": "لم يتم العثور على المكان. جرب بحثاً آخر.",
+    "searchError": "فشل البحث. حاول مرة أخرى."
   },
   "location": {
     "searchPlaceholder": "البحث حسب المدينة أو الدولة...",

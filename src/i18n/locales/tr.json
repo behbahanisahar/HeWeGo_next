@@ -66,14 +66,25 @@
     "stop": "Durak",
     "stops": "Duraklar",
     "createTour": "Tur Oluştur",
+    "createTourSubtitle": "Ad, şehir, açıklama, etiketler, fiyat, süre ve konumlarınızla yeni bir tur oluşturun (veya haritada yenilerini ekleyin).",
     "createTourName": "Tur adı",
+    "tourNamePlaceholder": "örn. Londra Şehri",
     "createTourCity": "Şehir",
+    "citySearchPlaceholder": "Şehir ara...",
     "createTourExplanation": "Açıklama",
+    "explanationPlaceholder": "örn. Tarihi Londra'da gezin",
+    "estimatedDurationPlaceholder": "örn. 120",
+    "estimatedDurationHint": "Seçilen konumlara göre (yer başına 30 dk). Değiştirebilirsiniz.",
+    "minutes": "dakika",
+    "pricePlaceholder": "Ücretsiz için 0 veya tutar girin",
+    "tagsPlaceholder": "örn. tarih, Londra",
     "createTourNameRequired": "Lütfen bir tur adı girin.",
     "createTourCityRequired": "Lütfen bir şehir seçin.",
     "createTourError": "Tur oluşturulamadı. Lütfen tekrar deneyin.",
     "tags": "Etiketler",
     "selectCity": "Şehir seçin",
+    "searchCity": "Şehir ara...",
+    "noCityFound": "Şehir bulunamadı.",
     "myCreatedTours": "Oluşturduğum Turlar",
     "nearbyTours": "Yakınınızdaki Turlar",
     "selectLocation": "Konum Seç",
@@ -84,6 +95,11 @@
     "tourCreated": "Tur başarıyla oluşturuldu!",
     "userCreated": "Kullanıcı Tarafından Oluşturulan Tur",
     "media": "Medya"
+  },
+  "auth": {
+    "signInRequired": "Giriş gerekli",
+    "signInToAccess": "Bu sayfaya erişmek için lütfen giriş yapın veya hesap oluşturun.",
+    "sessionExpired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın."
   },
   "login": {
     "title": "Giriş Yap",
@@ -142,7 +158,11 @@
     "selectedPoint": "Seçilen nokta",
     "coordinates": "Koordinatlar",
     "yourLocations": "Konumlarınız",
-    "noLocations": "Henüz konumunuz yok. Oluşturmak için yukarıdaki haritaya tıklayın."
+    "noLocations": "Henüz konumunuz yok. Oluşturmak için yukarıdaki haritaya tıklayın.",
+    "mapSearchPlaceholder": "Yer veya adres ara...",
+    "search": "Ara",
+    "searchNotFound": "Yer bulunamadı. Başka bir arama deneyin.",
+    "searchError": "Arama başarısız. Tekrar deneyin."
   },
   "location": {
     "searchPlaceholder": "Şehir veya ülkeye göre ara...",

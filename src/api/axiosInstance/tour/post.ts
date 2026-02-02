@@ -7,6 +7,10 @@ export interface ICreateTourPayload {
   tags: string[];
   /** Optional: IDs of user locations to include in this tour (from GET /api/user_locations). */
   location_ids?: number[];
+  /** Optional: estimated duration in minutes. */
+  estimated_duration?: number;
+  /** Optional: price in currency units (e.g. single price). Sent as array for API compatibility. */
+  prices?: number[];
 }
 
 export interface ICreateTourResponse {
@@ -19,7 +23,7 @@ export interface ICreateTourResponse {
 
 /**
  * POST https://hewego.azurewebsites.net/api/tours/create
- * Create a new tour with name, city (id), explanation, tags.
+ * Create a new tour with name, city (id), explanation, tags, and optional location_ids, estimated_duration, prices.
  */
 export async function createTour(payload: ICreateTourPayload): Promise<ICreateTourResponse> {
   const response = await axiosInstance.post<ICreateTourResponse>('/api/tours/create', payload);

@@ -36,13 +36,24 @@ function ResponsiveAppBar() {
     navigate('/login');
   };
 
+  const protectedPaths = ['/tour/nearby', '/tour/create', '/mytour', '/profile', '/profile/edit'];
+
   const navigationItems = [
-    { path: '/', label: t('common.home'), icon: Home },
-    { path: '/tour', label: t('common.tours'), icon: MapPin },
-    { path: '/tour/nearby', label: t('tours.nearbyTours'), icon: MapPin },
-    { path: '/tour/create', label: t('tours.createTour'), icon: MapPin },
-    { path: '/mytour', label: t('common.myTours'), icon: MapPin },
+    { path: '/', label: t('common.home'), icon: Home, protected: false },
+    { path: '/tour', label: t('common.tours'), icon: MapPin, protected: false },
+    { path: '/tour/nearby', label: t('tours.nearbyTours'), icon: MapPin, protected: true },
+    { path: '/tour/create', label: t('tours.createTour'), icon: MapPin, protected: true },
+    { path: '/mytour', label: t('common.myTours'), icon: MapPin, protected: true },
   ];
+
+  const handleNavClick = (path: string) => {
+    setMobileMenuOpen(false);
+    if (!isAuthenticated && protectedPaths.includes(path)) {
+      navigate('/login', { state: { from: { pathname: path } } });
+    } else {
+      navigate(path);
+    }
+  };
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -57,31 +68,7 @@ function ResponsiveAppBar() {
         {/* Logo */}
         <Logo showText={true} size="md" />
 
-        {/* Desktop Navigation - Only when authenticated */}
-        {isAuthenticated && (
-          <nav className="hidden md:flex items-center gap-1">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                    isActive(item.path)
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        )}
-
-        {/* Right side: Auth buttons / User menu */}
+        {/* Right side: Theme, language, auth, and burger menu */}
         <div className="flex items-center gap-2">
           {/* Theme Toggle */}
           <ThemeToggle />
@@ -159,21 +146,25 @@ function ResponsiveAppBar() {
                 <nav className="flex flex-col gap-1 flex-1 px-4 py-4 overflow-y-auto">
                   {navigationItems.map((item) => {
                     const Icon = item.icon;
+                    const needsLogin = !isAuthenticated && item.protected;
                     return (
-                      <Link
+                      <button
                         key={item.path}
-                        to={item.path}
-                        onClick={() => setMobileMenuOpen(false)}
+                        type="button"
+                        onClick={() => handleNavClick(item.path)}
                         className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                          "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left",
                           isActive(item.path)
                             ? "bg-accent text-accent-foreground"
                             : "text-foreground hover:bg-accent hover:text-accent-foreground"
                         )}
                       >
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-5 w-5 shrink-0" />
                         <span>{item.label}</span>
-                      </Link>
+                        {needsLogin && (
+                          <span className="ml-auto text-xs text-muted-foreground">{t('auth.signInRequired')}</span>
+                        )}
+                      </button>
                     );
                   })}
                 </nav>

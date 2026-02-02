@@ -5,6 +5,7 @@ export interface ICreateLocationPayload {
   latitude: string;
   longitude: string;
   explanation: string;
+  tags: string[];
 }
 
 export interface ICreateLocationResponse {

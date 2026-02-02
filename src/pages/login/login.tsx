@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useContext } from "react";
 import { CopyRight } from "@/components/copyRight/copyRight";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,10 @@ function LogIn() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const appContext = useContext(Context);
+  const sessionExpired = searchParams.get('session_expired') === '1';
+  const fromPath = searchParams.get('from') || (location.state as { from?: { pathname?: string } })?.from?.pathname;
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -46,10 +49,10 @@ function LogIn() {
         response.user,
         response.access_token,
         response.role,
-        rememberMe
+        rememberMe,
+        response.refresh_token
       );
-      const fromLocation = (location.state as { from?: { pathname?: string } })?.from;
-      navigate(fromLocation?.pathname || "/", { replace: true });
+      navigate(fromPath || "/", { replace: true });
     } catch {
       setError(true);
     } finally {
@@ -71,7 +74,11 @@ function LogIn() {
             </div>
             <CardTitle className="text-2xl font-bold">{t('login.title')}</CardTitle>
             <CardDescription>
-              {t('login.subtitle')}
+              {sessionExpired
+                ? t('auth.sessionExpired')
+                : fromPath
+                  ? t('auth.signInToAccess')
+                  : t('login.subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -138,6 +145,7 @@ function LogIn() {
                 </Link>
                 <Link
                   to="/register"
+                  state={{ from: (location.state as { from?: { pathname?: string } })?.from }}
                   className="text-primary hover:underline"
                 >
                   {t('login.noAccount')}

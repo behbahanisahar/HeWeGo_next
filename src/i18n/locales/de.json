@@ -66,14 +66,25 @@
     "stop": "Halt",
     "stops": "Halte",
     "createTour": "Tour erstellen",
+    "createTourSubtitle": "Erstellen Sie eine neue Tour mit Name, Stadt, Beschreibung, Tags, Preis, Dauer und Ihren Orten (oder erstellen Sie neue auf der Karte).",
     "createTourName": "Tourname",
+    "tourNamePlaceholder": "z. B. City of London",
     "createTourCity": "Stadt",
+    "citySearchPlaceholder": "Städte suchen...",
     "createTourExplanation": "Beschreibung / Erklärung",
+    "explanationPlaceholder": "z. B. Rundgang durch die historische City of London",
+    "estimatedDurationPlaceholder": "z. B. 120",
+    "estimatedDurationHint": "Basierend auf ausgewählten Orten (30 Min. pro Ort). Sie können dies ändern.",
+    "minutes": "Minuten",
+    "pricePlaceholder": "0 für kostenlos oder Betrag eingeben",
+    "tagsPlaceholder": "z. B. Geschichte, London",
     "createTourNameRequired": "Bitte geben Sie einen Tournamen ein.",
     "createTourCityRequired": "Bitte wählen Sie eine Stadt.",
     "createTourError": "Tour konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
     "tags": "Tags",
     "selectCity": "Stadt auswählen",
+    "searchCity": "Städte suchen...",
+    "noCityFound": "Keine Stadt gefunden.",
     "myCreatedTours": "Meine erstellten Touren",
     "nearbyTours": "Touren in Ihrer Nähe",
     "selectLocation": "Standort auswählen",
@@ -84,6 +95,11 @@
     "tourCreated": "Tour erfolgreich erstellt!",
     "userCreated": "Von Benutzer erstellte Tour",
     "media": "Medien"
+  },
+  "auth": {
+    "signInRequired": "Anmeldung erforderlich",
+    "signInToAccess": "Bitte melden Sie sich an oder erstellen Sie ein Konto, um auf diese Seite zuzugreifen.",
+    "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an."
   },
   "login": {
     "title": "Anmelden",
@@ -142,7 +158,11 @@
     "selectedPoint": "Ausgewählter Punkt",
     "coordinates": "Koordinaten",
     "yourLocations": "Ihre Orte",
-    "noLocations": "Sie haben noch keine Orte. Klicken Sie oben auf die Karte, um einen zu erstellen."
+    "noLocations": "Sie haben noch keine Orte. Klicken Sie oben auf die Karte, um einen zu erstellen.",
+    "mapSearchPlaceholder": "Ort oder Adresse suchen...",
+    "search": "Suchen",
+    "searchNotFound": "Ort nicht gefunden. Versuchen Sie eine andere Suche.",
+    "searchError": "Suche fehlgeschlagen. Bitte erneut versuchen."
   },
   "location": {
     "searchPlaceholder": "Nach Stadt oder Land suchen...",

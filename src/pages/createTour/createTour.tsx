@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, X, Save, MapPin, AlertCircle } from 'lucide-react';
+import { Plus, X, Save, MapPin, AlertCircle, Search, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { createTour } from '@/api/tour/post';
 import { getAllCities } from '@/api/cities/get';
@@ -23,6 +23,7 @@ const CreateTour = () => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const skipFitBoundsOnceRef = useRef(false);
 
   const [name, setName] = useState('');
   const [cityId, setCityId] = useState<number | ''>('');
@@ -45,6 +46,14 @@ const CreateTour = () => {
   const [message, setMessage] = useState<string>('');
   const [messageError, setMessageError] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [mapSearchQuery, setMapSearchQuery] = useState('');
+  const [mapSearching, setMapSearching] = useState(false);
+  const [mapSearchError, setMapSearchError] = useState<string | null>(null);
+  const [citySearchQuery, setCitySearchQuery] = useState('');
+  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const cityDropdownRef = useRef<HTMLDivElement>(null);
+  const [estimatedDurationMinutes, setEstimatedDurationMinutes] = useState<number | ''>('');
+  const [priceInput, setPriceInput] = useState<string>('');
 
   useEffect(() => {
     getAllCities()
@@ -63,6 +72,33 @@ const CreateTour = () => {
 
   useEffect(() => {
     loadUserLocations();
+  }, []);
+
+  // Suggest estimated duration based on number of selected locations (user can change)
+  useEffect(() => {
+    const count = selectedLocationIds.size;
+    const suggested = count > 0 ? Math.max(30, count * 30) : '';
+    setEstimatedDurationMinutes(suggested);
+  }, [selectedLocationIds]);
+
+  const filteredCities = useMemo(() => {
+    const q = citySearchQuery.trim().toLowerCase();
+    if (!q) return cities;
+    return cities.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        (c.country && c.country.trim().toLowerCase().includes(q))
+    );
+  }, [cities, citySearchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (cityDropdownRef.current && !cityDropdownRef.current.contains(e.target as Node)) {
+        setCityDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Map init and click
@@ -148,9 +184,10 @@ const CreateTour = () => {
 
       const all: [number, number][] = userLocations.map((l) => [l.latitude, l.longitude]);
       if (newLocLat != null && newLocLng != null) all.push([newLocLat, newLocLng]);
-      if (all.length > 0) {
+      if (all.length > 0 && !skipFitBoundsOnceRef.current) {
         mapRef.current.fitBounds(L.latLngBounds(all), { padding: [30, 30], maxZoom: 16 });
       }
+      skipFitBoundsOnceRef.current = false;
     };
 
     updateMarkers();
@@ -176,6 +213,43 @@ const CreateTour = () => {
     });
   };
 
+  /** Geocode place name and move map (and optionally set new location point). */
+  const handleMapSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const query = mapSearchQuery.trim();
+    if (!query || !mapRef.current) return;
+    setMapSearchError(null);
+    setMapSearching(true);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
+        { headers: { 'Accept-Language': 'en', 'User-Agent': 'HeWeGoApp/1.0' } }
+      );
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        setMapSearchError(t('locations.searchNotFound') ?? 'Place not found. Try another search.');
+        return;
+      }
+      const { lat, lon } = data[0];
+      const latNum = Number(lat);
+      const lngNum = Number(lon);
+      if (Number.isNaN(latNum) || Number.isNaN(lngNum)) {
+        setMapSearchError(t('locations.searchNotFound') ?? 'Place not found.');
+        return;
+      }
+      skipFitBoundsOnceRef.current = true;
+      mapRef.current.setView([latNum, lngNum], 14);
+      setNewLocLat(latNum);
+      setNewLocLng(lngNum);
+      setMapSearchError(null);
+    } catch (err) {
+      console.error('Map search error:', err);
+      setMapSearchError(t('locations.searchError') ?? 'Search failed. Try again.');
+    } finally {
+      setMapSearching(false);
+    }
+  };
+
   const handleCreateNewLocation = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newLocLat == null || newLocLng == null || !newLocName.trim()) {
@@ -192,6 +266,7 @@ const CreateTour = () => {
         latitude: String(newLocLat),
         longitude: String(newLocLng),
         explanation: newLocExplanation.trim() || '',
+        tags: [],
       });
       loadUserLocations();
       setNewLocName('');
@@ -228,12 +303,17 @@ const CreateTour = () => {
 
     setSaving(true);
     try {
+      const priceNum = priceInput.trim() ? Number(priceInput.trim()) : undefined;
+      const prices = priceNum != null && !Number.isNaN(priceNum) && priceNum >= 0 ? [priceNum] : undefined;
+      const duration = estimatedDurationMinutes === '' ? undefined : Number(estimatedDurationMinutes);
       const result = await createTour({
         name: name.trim(),
         city: Number(cityId),
         explanation: explanation.trim() || '',
         tags,
         ...(selectedLocationIds.size > 0 && { location_ids: Array.from(selectedLocationIds) }),
+        ...(duration != null && duration > 0 && { estimated_duration: duration }),
+        ...(prices != null && prices.length > 0 && { prices }),
       });
       setMessage(t('tours.tourCreated'));
       setMessageError(false);
@@ -257,7 +337,7 @@ const CreateTour = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t('tours.createTour')}</h1>
         <p className="text-muted-foreground">
-          Create a new tour with name, city, description, tags, and add your locations (or create new ones on the map).
+          {t('tours.createTourSubtitle')}
         </p>
       </div>
 
@@ -273,29 +353,88 @@ const CreateTour = () => {
                 id="tourName"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., City of London"
+                placeholder={t('tours.tourNamePlaceholder')}
                 className="mt-1"
               />
             </div>
-            <div>
+            <div ref={cityDropdownRef}>
               <Label htmlFor="tourCity">{t('tours.createTourCity')} *</Label>
-              <select
-                id="tourCity"
-                value={cityId === '' ? '' : cityId}
-                onChange={(e) => setCityId(e.target.value === '' ? '' : Number(e.target.value))}
-                disabled={citiesLoading}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 mt-1"
-              >
-                <option value="">
-                  {citiesLoading ? t('common.loading') : t('tours.selectCity')}
-                </option>
-                {cities.map((city) => (
-                  <option key={city.id} value={city.id}>
-                    {city.name}
-                    {city.country ? `, ${city.country.trim()}` : ''}
-                  </option>
-                ))}
-              </select>
+              <div className="relative mt-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <Input
+                  id="tourCity"
+                  type="text"
+                  value={citySearchQuery}
+                  onChange={(e) => {
+                    setCitySearchQuery(e.target.value);
+                    setCityDropdownOpen(true);
+                  }}
+                  onFocus={() => setCityDropdownOpen(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const first = filteredCities[0];
+                      if (first) {
+                        setCityId(first.id);
+                        setCitySearchQuery(first.country ? `${first.name}, ${first.country.trim()}` : first.name);
+                        setCityDropdownOpen(false);
+                      }
+                    }
+                  }}
+                  placeholder={citiesLoading ? t('common.loading') : t('tours.citySearchPlaceholder')}
+                  disabled={citiesLoading}
+                  className="pl-9 pr-9"
+                />
+                {cityId !== '' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCityId('');
+                      setCitySearchQuery('');
+                      setCityDropdownOpen(true);
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-muted text-muted-foreground"
+                    aria-label={t('common.clear')}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+                {cityId === '' && (
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                )}
+                {cityDropdownOpen && !citiesLoading && (
+                  <ul
+                    className="absolute z-10 w-full mt-1 max-h-60 overflow-auto rounded-md border bg-popover py-1 text-sm shadow-md"
+                    role="listbox"
+                  >
+                    {filteredCities.length === 0 ? (
+                      <li className="px-3 py-2 text-muted-foreground">
+                        {t('tours.noCityFound')}
+                      </li>
+                    ) : (
+                      filteredCities.map((city) => {
+                        const label = city.country ? `${city.name}, ${city.country.trim()}` : city.name;
+                        const isSelected = cityId === city.id;
+                        return (
+                          <li
+                            key={city.id}
+                            role="option"
+                            aria-selected={isSelected}
+                            className={`cursor-pointer px-3 py-2 hover:bg-accent ${isSelected ? 'bg-accent' : ''}`}
+                            onClick={() => {
+                              setCityId(city.id);
+                              setCitySearchQuery(label);
+                              setCityDropdownOpen(false);
+                            }}
+                          >
+                            {label}
+                          </li>
+                        );
+                      })
+                    )}
+                  </ul>
+                )}
+              </div>
             </div>
             <div>
               <Label htmlFor="explanation">{t('tours.createTourExplanation')}</Label>
@@ -303,9 +442,40 @@ const CreateTour = () => {
                 id="explanation"
                 value={explanation}
                 onChange={(e) => setExplanation(e.target.value)}
-                placeholder="e.g., Go around in historic City of London"
+                placeholder={t('tours.explanationPlaceholder')}
                 rows={4}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="estimatedDuration">{t('tours.estimatedDuration')} ({t('tours.minutes')})</Label>
+              <Input
+                id="estimatedDuration"
+                type="number"
+                min={1}
+                value={estimatedDurationMinutes === '' ? '' : estimatedDurationMinutes}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setEstimatedDurationMinutes(v === '' ? '' : Math.max(0, parseInt(v, 10) || 0));
+                }}
+                placeholder={t('tours.estimatedDurationPlaceholder')}
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {t('tours.estimatedDurationHint')}
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="tourPrice">{t('tours.price')}</Label>
+              <Input
+                id="tourPrice"
+                type="number"
+                min={0}
+                step={0.01}
+                value={priceInput}
+                onChange={(e) => setPriceInput(e.target.value)}
+                placeholder={t('tours.pricePlaceholder')}
+                className="mt-1"
               />
             </div>
             <div>
@@ -321,7 +491,7 @@ const CreateTour = () => {
                       addTag();
                     }
                   }}
-                  placeholder="e.g., history, London"
+                  placeholder={t('tours.tagsPlaceholder')}
                 />
                 <Button type="button" onClick={addTag} variant="outline">
                   <Plus className="h-4 w-4" />
@@ -357,6 +527,40 @@ const CreateTour = () => {
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Map search - use div not form to avoid submitting the parent Create Tour form on Enter */}
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <Input
+                  type="text"
+                  value={mapSearchQuery}
+                  onChange={(e) => {
+                    setMapSearchQuery(e.target.value);
+                    setMapSearchError(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleMapSearch(e as unknown as React.FormEvent);
+                    }
+                  }}
+                  placeholder={t('locations.mapSearchPlaceholder')}
+                  className="pl-9"
+                  disabled={mapSearching}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={mapSearching || !mapSearchQuery.trim()}
+                onClick={(e) => handleMapSearch(e as unknown as React.FormEvent)}
+              >
+                {mapSearching ? t('common.loading') : t('locations.search')}
+              </Button>
+            </div>
+            {mapSearchError && (
+              <p className="text-sm text-destructive">{mapSearchError}</p>
+            )}
             {/* Map */}
             {mapError ? (
               <div className="w-full h-[320px] rounded-lg flex items-center justify-center bg-muted">
@@ -407,7 +611,7 @@ const CreateTour = () => {
               )}
             </div>
 
-            {/* Create new location (when map clicked) */}
+            {/* Create new location (when map clicked) - use div not form to avoid nested form (outer form is Create Tour) */}
             {newLocLat != null && newLocLng != null && (
               <Card className="border-primary/50">
                 <CardHeader>
@@ -417,12 +621,18 @@ const CreateTour = () => {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleCreateNewLocation} className="space-y-3">
+                  <div className="space-y-3">
                     <div>
                       <Label>{t('locations.name')} *</Label>
                       <Input
                         value={newLocName}
                         onChange={(e) => setNewLocName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleCreateNewLocation(e as unknown as React.FormEvent);
+                          }
+                        }}
                         placeholder="e.g., Leadenhall Market"
                         className="mt-1"
                       />
@@ -438,7 +648,11 @@ const CreateTour = () => {
                       />
                     </div>
                     <div className="flex gap-2">
-                      <Button type="submit" disabled={creatingLocation}>
+                      <Button
+                        type="button"
+                        disabled={creatingLocation}
+                        onClick={(e) => handleCreateNewLocation(e as unknown as React.FormEvent)}
+                      >
                         {creatingLocation ? t('common.saving') : t('locations.createLocation')}
                       </Button>
                       <Button
@@ -454,7 +668,7 @@ const CreateTour = () => {
                         {t('common.back')}
                       </Button>
                     </div>
-                  </form>
+                  </div>
                 </CardContent>
               </Card>
             )}

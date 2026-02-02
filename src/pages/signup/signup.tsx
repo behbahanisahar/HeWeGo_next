@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState, useRef } from "react";
 import { ISignUpPostData, postSignUpData, isRegisterError } from "@/api/signUp/post";
 import { CopyRight } from "@/components/copyRight/copyRight";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,7 @@ interface IFieldErrors {
 export default function SignUp() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState<ISignUpPostData>({
     name: "",
     password: "",
@@ -77,7 +78,8 @@ export default function SignUp() {
         await postSignUpData(formData);
 
         setMessage(t('signup.accountCreated'));
-        setTimeout(() => navigate('/tour'), 800);
+        const fromPath = (location.state as { from?: { pathname?: string } })?.from?.pathname;
+        setTimeout(() => navigate(fromPath || '/tour', { replace: true }), 800);
       } catch (error: unknown) {
         if (isRegisterError(error) && error.response?.status === 400) {
           const apiMessage = error.response.data?.message ?? '';

@@ -66,9 +66,21 @@
     "stop": "Stop",
     "stops": "Stops",
     "createTour": "Create Tour",
+    "createTourSubtitle": "Create a new tour with name, city, description, tags, price, duration, and add your locations (or create new ones on the map).",
     "createTourName": "Tour name",
+    "tourNamePlaceholder": "e.g., City of London",
     "createTourCity": "City",
+    "selectCity": "Select a city",
+    "searchCity": "Search cities...",
+    "citySearchPlaceholder": "Search cities...",
+    "noCityFound": "No city found.",
     "createTourExplanation": "Description / Explanation",
+    "explanationPlaceholder": "e.g., Go around in historic City of London",
+    "estimatedDurationPlaceholder": "e.g., 120",
+    "estimatedDurationHint": "Based on selected locations (30 min per place). You can change this.",
+    "minutes": "minutes",
+    "pricePlaceholder": "0 for free, or enter amount",
+    "tagsPlaceholder": "e.g., history, London",
     "createTourNameRequired": "Please enter a tour name.",
     "createTourCityRequired": "Please select a city.",
     "createTourError": "Failed to create tour. Please try again.",
@@ -83,6 +95,11 @@
     "tourCreated": "Tour created successfully!",
     "userCreated": "User Created Tour",
     "media": "Media"
+  },
+  "auth": {
+    "signInRequired": "Sign in required",
+    "signInToAccess": "Please sign in or create an account to access this page.",
+    "sessionExpired": "Your session has expired. Please sign in again."
   },
   "login": {
     "title": "Sign in",
@@ -141,7 +158,11 @@
     "selectedPoint": "Selected point",
     "coordinates": "Coordinates",
     "yourLocations": "Your locations",
-    "noLocations": "You don't have any locations yet. Click on the map above to create one."
+    "noLocations": "You don't have any locations yet. Click on the map above to create one.",
+    "mapSearchPlaceholder": "Search place or address...",
+    "search": "Search",
+    "searchNotFound": "Place not found. Try another search.",
+    "searchError": "Search failed. Try again."
   },
   "location": {
     "searchPlaceholder": "Search by city or country...",
