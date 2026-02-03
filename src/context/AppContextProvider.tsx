@@ -2,6 +2,7 @@ import React, { Component, ReactNode } from "react";
 import { AppContextState, Context } from "./AppContext";
 import IUserInfo from "src/entities/userinfo";
 import { getUserInfoAndFavorites } from "@/api/users/getInfo";
+import { getFavourites } from "@/api/favourites/get";
 
 const AUTH_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
@@ -64,6 +65,15 @@ class AppContextProvider extends Component<AppContextProviderProps, AppContextSt
     this.setState({ favorites });
   };
 
+  refreshFavorites = async (): Promise<void> => {
+    try {
+      const list = await getFavourites();
+      this.setState({ favorites: list });
+    } catch {
+      // keep existing favorites on error
+    }
+  };
+
   refreshUserInfoFromServer = async (): Promise<void> => {
     try {
       const data = await getUserInfoAndFavorites();
@@ -79,6 +89,13 @@ class AppContextProvider extends Component<AppContextProviderProps, AppContextSt
       }
     } catch {
       // ignore refresh failures; keep existing userInfo
+    }
+    // Also fetch favourites from dedicated endpoint if available (may have more detail)
+    try {
+      const list = await getFavourites();
+      if (list.length >= 0) this.setState({ favorites: list });
+    } catch {
+      // keep favorites from user info if GET /api/favourites fails
     }
   };
 
@@ -124,6 +141,7 @@ class AppContextProvider extends Component<AppContextProviderProps, AppContextSt
           actions: {
             setUserInfo: this.setUserInfo,
             setFavorites: this.setFavorites,
+            refreshFavorites: this.refreshFavorites,
             setAuth: this.setAuth,
             clearAuth: this.clearAuth,
           },

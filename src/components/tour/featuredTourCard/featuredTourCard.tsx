@@ -1,12 +1,19 @@
 import { IAllTourItems } from "@/entities/tour";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Star, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Star, MapPin, Heart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import homepage from "@/images/homepage.jpg";
 import homepage2 from "@/images/homepage2.jpg";
 import homepage3 from "@/images/homepage3.jpg";
+import { Context } from "@/context/AppContext";
+import { addFavourite } from "@/api/favourites/post";
+import { deleteFavourite } from "@/api/favourites/delete";
+import type { IFavouriteItem } from "@/api/favourites/get";
 
 interface FeaturedTourCardProps {
   tour: IAllTourItems & { distance?: number };
@@ -17,8 +24,37 @@ const sampleImages = [homepage, homepage2, homepage3];
 
 export const FeaturedTourCard = ({ tour, index }: FeaturedTourCardProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const appContext = useContext(Context);
+  const [favouriteLoading, setFavouriteLoading] = useState(false);
+  const favorites = (appContext?.state.favorites ?? []) as IFavouriteItem[];
+  const isAuthenticated = Boolean(appContext?.state.userInfo?.id);
+  const isFavourite = favorites.some((f) => Number(f.id) === Number(tour.id));
   const imageIndex = index % sampleImages.length;
   const tourImage = sampleImages[imageIndex];
+
+  const handleFavouriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      navigate("/login", { state: { from: { pathname: `/tour/${tour.id}` } } });
+      return;
+    }
+    if (favouriteLoading) return;
+    setFavouriteLoading(true);
+    try {
+      if (isFavourite) {
+        await deleteFavourite(tour.id);
+      } else {
+        await addFavourite(tour.id);
+      }
+      await appContext?.actions.refreshFavorites();
+    } catch (err) {
+      console.error("Favourite update failed:", err);
+    } finally {
+      setFavouriteLoading(false);
+    }
+  };
 
   return (
     <Link to={`/tour/${tour.id}`} className="block h-full">
@@ -33,20 +69,10 @@ export const FeaturedTourCard = ({ tour, index }: FeaturedTourCardProps) => {
           />
           {/* Gradient overlay for text readability - lighter so image shows through */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-          
-          {/* Rating Badge */}
-          {tour.average_rating != null && tour.average_rating > 0 && (
-            <div className="absolute top-3 left-3 z-30">
-              <Badge className="bg-background/95 backdrop-blur-sm shadow-lg">
-                <Star className="h-3 w-3 fill-yellow-500 text-yellow-500 mr-1" />
-                <span className="text-xs font-semibold">{(tour.average_rating as number).toFixed(1)}</span>
-              </Badge>
-            </div>
-          )}
-          
-          {/* Price Badge - show for all tours (array: empty = Free, one = $X, multiple = From $X) */}
-          <div className="absolute top-3 right-3 z-30">
-            <Badge variant="secondary" className="bg-background/95 backdrop-blur-sm shadow-lg">
+
+          {/* Top-right: Price badge + Favourite button side by side (no overlap) */}
+          <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
+            <Badge variant="secondary" className="bg-background/95 backdrop-blur-sm shadow-lg shrink-0">
               <span className="text-xs font-semibold">
                 {(() => {
                   const price = (() => {
@@ -59,7 +85,28 @@ export const FeaturedTourCard = ({ tour, index }: FeaturedTourCardProps) => {
                 })()}
               </span>
             </Badge>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 min-w-9 min-h-9 rounded-full flex items-center justify-center p-0 text-white bg-black/40 hover:bg-black/60 hover:text-white border-0 shadow-md shrink-0"
+              onClick={handleFavouriteClick}
+              disabled={favouriteLoading}
+              title={isFavourite ? t("tours.removeFromFavourites") : t("tours.addToFavourites")}
+              aria-label={isFavourite ? t("tours.removeFromFavourites") : t("tours.addToFavourites")}
+            >
+              <Heart className={`h-4 w-4 shrink-0 ${isFavourite ? "fill-red-500 text-red-500" : ""}`} />
+            </Button>
           </div>
+
+          {/* Rating Badge */}
+          {tour.average_rating != null && tour.average_rating > 0 && (
+            <div className="absolute top-3 left-3 z-30">
+              <Badge className="bg-background/95 backdrop-blur-sm shadow-lg">
+                <Star className="h-3 w-3 fill-yellow-500 text-yellow-500 mr-1" />
+                <span className="text-xs font-semibold">{(tour.average_rating as number).toFixed(1)}</span>
+              </Badge>
+            </div>
+          )}
           
           {/* City Badge */}
           {tour.city && (

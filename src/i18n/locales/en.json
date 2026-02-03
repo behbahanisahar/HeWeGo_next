@@ -51,6 +51,10 @@
     "aboutThisTour": "About This Tour",
     "tagsAndCategories": "Tags & Categories",
     "tourDetails": "Tour Details",
+    "addToFavourites": "Add to Favourites",
+    "inFavourites": "In your favourites",
+    "removeFromFavourites": "Remove from Favourites",
+    "myFavourites": "My Favourites",
     "price": "Price",
     "priceFree": "Free",
     "priceOnRequest": "Price on request",
@@ -86,6 +90,8 @@
     "createTourError": "Failed to create tour. Please try again.",
     "tags": "Tags",
     "myCreatedTours": "My Created Tours",
+    "noCreatedTours": "You haven't created any tours yet.",
+    "createFirstTourHint": "Create your first tour and share it with others.",
     "nearbyTours": "Tours Near You",
     "selectLocation": "Select Location",
     "addPlace": "Add Place",
@@ -94,7 +100,11 @@
     "saveTour": "Save Tour",
     "tourCreated": "Tour created successfully!",
     "userCreated": "User Created Tour",
-    "media": "Media"
+    "media": "Media",
+    "rateThisTour": "Rate this tour",
+    "rateThisPlace": "Rate this place",
+    "rateSubmitted": "Thanks for your rating!",
+    "signInToRate": "Sign in to rate"
   },
   "auth": {
     "signInRequired": "Sign in required",
@@ -133,6 +143,8 @@
     "errorOccurred": "An error occurred. Please try again."
   },
   "profile": {
+    "subtitle": "Your account and created tours",
+    "tourLeader": "Tour Leader",
     "editProfile": "Edit Profile",
     "updateInfo": "Update your profile information",
     "name": "Name",
@@ -162,13 +174,23 @@
     "mapSearchPlaceholder": "Search place or address...",
     "search": "Search",
     "searchNotFound": "Place not found. Try another search.",
-    "searchError": "Search failed. Try again."
+    "searchError": "Search failed. Try again.",
+    "nearbyTitle": "Locations Near You",
+    "nearbySubtitle": "Discover places near your current location. Enable location to see results.",
+    "filterByTags": "Filter by tags:",
+    "maxDistance": "Within",
+    "nearbyError": "Failed to load nearby locations. Please try again.",
+    "nearbyEnableLocation": "Enable location access to see places near you.",
+    "nearbyNoResults": "No locations found within this distance. Try increasing the radius or changing tags.",
+    "noDescription": "No description available.",
+    "away": "away"
   },
   "location": {
     "searchPlaceholder": "Search by city or country...",
     "useMyLocation": "Use My Location",
     "gettingLocation": "Getting location...",
     "usingLocation": "Using your location",
+    "youAreIn": "You're in:",
     "clear": "Clear",
     "locationDenied": "Location access denied. Please enable location permissions.",
     "locationError": "Unable to get your location. Please try again.",

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CopyRight } from "@/components/copyRight/copyRight";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -141,13 +141,20 @@ const ProfileEditableForm = () => {
                 {message}
               </p>
             )}
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
-              {loading ? t('profile.saving') : t('profile.submit')}
-            </Button>
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <Link to="/profile" className="w-full sm:w-auto order-2 sm:order-1">
+                <Button type="button" variant="outline" className="w-full sm:w-auto">
+                  {t('common.back')}
+                </Button>
+              </Link>
+              <Button
+                type="submit"
+                className="w-full sm:w-auto order-1 sm:order-2"
+                disabled={loading}
+              >
+                {loading ? t('profile.saving') : t('profile.submit')}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

@@ -26,6 +26,73 @@ function toRad(degrees: number): number {
   return (degrees * Math.PI) / 180;
 }
 
+/** Nominatim address can have various keys depending on location (city, town, village, municipality, etc.) */
+const CITY_KEYS = [
+  'city',
+  'town',
+  'village',
+  'municipality',
+  'suburb',
+  'locality',
+  'district',
+  'borough',
+  'county',
+  'state_district',
+  'state',
+  'region',
+] as const;
+
+/**
+ * Reverse geocode: get city (and country) from latitude/longitude using OpenStreetMap Nominatim.
+ * Returns a short label like "London, UK" or null if the request fails.
+ * Requires addressdetails=1 so the API returns the address object.
+ */
+export async function getCityFromCoords(
+  latitude: number,
+  longitude: number
+): Promise<string | null> {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`;
+    const res = await fetch(url, {
+      headers: { 'Accept-Language': 'en', 'User-Agent': 'HeWeGo/1.0 (https://hewego.azurewebsites.net)' },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      address?: Record<string, string>;
+      display_name?: string;
+    };
+    const addr = data?.address;
+    const country = addr?.country ?? '';
+
+    // Try each known address key for a city-like name (prefer more specific first)
+    let cityPart = '';
+    for (const key of CITY_KEYS) {
+      const value = addr?.[key];
+      if (value && typeof value === 'string' && value.trim()) {
+        cityPart = value.trim();
+        break;
+      }
+    }
+
+    if (cityPart && country) return `${cityPart}, ${country}`;
+    if (cityPart) return cityPart;
+    if (country) return country;
+
+    // Fallback: use display_name (e.g. "Westminster, London, Greater London, England, United Kingdom")
+    const displayName = data?.display_name;
+    if (displayName && typeof displayName === 'string') {
+      const parts = displayName.split(',').map((p) => p.trim()).filter(Boolean);
+      if (parts.length >= 2) return `${parts[0]}, ${parts[parts.length - 1]}`;
+      if (parts.length === 1) return parts[0];
+      return displayName;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Get user's current location using Geolocation API
  */

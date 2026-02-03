@@ -85,7 +85,13 @@
     "selectCity": "Sélectionner une ville",
     "searchCity": "Rechercher des villes...",
     "noCityFound": "Aucune ville trouvée.",
+    "addToFavourites": "Ajouter aux favoris",
+    "inFavourites": "Dans vos favoris",
+    "removeFromFavourites": "Retirer des favoris",
+    "myFavourites": "Mes favoris",
     "myCreatedTours": "Mes visites créées",
+    "noCreatedTours": "Vous n'avez pas encore créé de visite.",
+    "createFirstTourHint": "Créez votre première visite et partagez-la avec d'autres.",
     "nearbyTours": "Visites près de vous",
     "selectLocation": "Sélectionner un emplacement",
     "addPlace": "Ajouter un lieu",
@@ -94,7 +100,11 @@
     "saveTour": "Enregistrer la visite",
     "tourCreated": "Visite créée avec succès!",
     "userCreated": "Visite créée par l'utilisateur",
-    "media": "Médias"
+    "media": "Médias",
+    "rateThisTour": "Noter cette visite",
+    "rateThisPlace": "Noter ce lieu",
+    "rateSubmitted": "Merci pour votre note !",
+    "signInToRate": "Connectez-vous pour noter"
   },
   "auth": {
     "signInRequired": "Connexion requise",
@@ -133,6 +143,8 @@
     "errorOccurred": "Une erreur s'est produite. Veuillez réessayer."
   },
   "profile": {
+    "subtitle": "Votre compte et vos visites créées",
+    "tourLeader": "Guide de visite",
     "editProfile": "Modifier le profil",
     "updateInfo": "Mettez à jour vos informations de profil",
     "name": "Nom",
@@ -162,13 +174,23 @@
     "mapSearchPlaceholder": "Rechercher un lieu ou une adresse...",
     "search": "Rechercher",
     "searchNotFound": "Lieu introuvable. Essayez une autre recherche.",
-    "searchError": "Recherche échouée. Réessayez."
+    "searchError": "Recherche échouée. Réessayez.",
+    "nearbyTitle": "Lieux près de vous",
+    "nearbySubtitle": "Découvrez les lieux près de votre position. Activez la localisation pour voir les résultats.",
+    "filterByTags": "Filtrer par tags :",
+    "maxDistance": "Dans un rayon de",
+    "nearbyError": "Impossible de charger les lieux à proximité. Veuillez réessayer.",
+    "nearbyEnableLocation": "Activez la localisation pour voir les lieux près de vous.",
+    "nearbyNoResults": "Aucun lieu trouvé dans ce rayon. Essayez d'augmenter la distance ou de changer les tags.",
+    "noDescription": "Aucune description disponible.",
+    "away": "à"
   },
   "location": {
     "searchPlaceholder": "Rechercher par ville ou pays...",
     "useMyLocation": "Utiliser ma position",
     "gettingLocation": "Obtention de la position...",
     "usingLocation": "Utilisation de votre position",
+    "youAreIn": "Vous êtes à :",
     "clear": "Effacer",
     "locationDenied": "Accès à la position refusé. Veuillez activer les autorisations de localisation.",
     "locationError": "Impossible d'obtenir votre position. Veuillez réessayer.",

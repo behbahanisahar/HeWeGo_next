@@ -85,7 +85,13 @@
     "selectCity": "Şehir seçin",
     "searchCity": "Şehir ara...",
     "noCityFound": "Şehir bulunamadı.",
+    "addToFavourites": "Favorilere Ekle",
+    "inFavourites": "Favorilerinizde",
+    "removeFromFavourites": "Favorilerden Çıkar",
+    "myFavourites": "Favorilerim",
     "myCreatedTours": "Oluşturduğum Turlar",
+    "noCreatedTours": "Henüz tur oluşturmadınız.",
+    "createFirstTourHint": "İlk turunuzu oluşturun ve başkalarıyla paylaşın.",
     "nearbyTours": "Yakınınızdaki Turlar",
     "selectLocation": "Konum Seç",
     "addPlace": "Yer Ekle",
@@ -94,7 +100,11 @@
     "saveTour": "Turu Kaydet",
     "tourCreated": "Tur başarıyla oluşturuldu!",
     "userCreated": "Kullanıcı Tarafından Oluşturulan Tur",
-    "media": "Medya"
+    "media": "Medya",
+    "rateThisTour": "Bu turu puanla",
+    "rateThisPlace": "Bu yeri puanla",
+    "rateSubmitted": "Puanınız için teşekkürler!",
+    "signInToRate": "Puanlamak için giriş yapın"
   },
   "auth": {
     "signInRequired": "Giriş gerekli",
@@ -133,6 +143,8 @@
     "errorOccurred": "Bir hata oluştu. Lütfen tekrar deneyin."
   },
   "profile": {
+    "subtitle": "Hesabınız ve oluşturduğunuz turlar",
+    "tourLeader": "Tur Lideri",
     "editProfile": "Profili Düzenle",
     "updateInfo": "Profil bilgilerinizi güncelleyin",
     "name": "Ad",
@@ -162,13 +174,23 @@
     "mapSearchPlaceholder": "Yer veya adres ara...",
     "search": "Ara",
     "searchNotFound": "Yer bulunamadı. Başka bir arama deneyin.",
-    "searchError": "Arama başarısız. Tekrar deneyin."
+    "searchError": "Arama başarısız. Tekrar deneyin.",
+    "nearbyTitle": "Yakınınızdaki Konumlar",
+    "nearbySubtitle": "Mevcut konumunuza yakın yerleri keşfedin. Sonuçları görmek için konumu etkinleştirin.",
+    "filterByTags": "Etiketlere göre filtrele:",
+    "maxDistance": "Mesafe",
+    "nearbyError": "Yakındaki konumlar yüklenemedi. Lütfen tekrar deneyin.",
+    "nearbyEnableLocation": "Yakınınızdaki yerleri görmek için konum erişimini etkinleştirin.",
+    "nearbyNoResults": "Bu mesafede konum bulunamadı. Yarıçapı artırmayı veya etiketleri değiştirmeyi deneyin.",
+    "noDescription": "Açıklama yok.",
+    "away": "uzakta"
   },
   "location": {
     "searchPlaceholder": "Şehir veya ülkeye göre ara...",
     "useMyLocation": "Konumumu Kullan",
     "gettingLocation": "Konum alınıyor...",
     "usingLocation": "Konumunuz kullanılıyor",
+    "youAreIn": "Konumunuz:",
     "clear": "Temizle",
     "locationDenied": "Konum erişimi reddedildi. Lütfen konum izinlerini etkinleştirin.",
     "locationError": "Konumunuz alınamadı. Lütfen tekrar deneyin.",

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, User, LogOut, Home, MapPin, UserCircle, X } from 'lucide-react';
+import { Menu, User, LogOut, Home, MapPin, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/components/languageSwitcher/languageSwitcher';
@@ -36,12 +36,12 @@ function ResponsiveAppBar() {
     navigate('/login');
   };
 
-  const protectedPaths = ['/tour/nearby', '/tour/create', '/mytour', '/profile', '/profile/edit'];
+  const protectedPaths = ['/tour/create', '/mytour', '/profile', '/profile/edit'];
 
   const navigationItems = [
     { path: '/', label: t('common.home'), icon: Home, protected: false },
     { path: '/tour', label: t('common.tours'), icon: MapPin, protected: false },
-    { path: '/tour/nearby', label: t('tours.nearbyTours'), icon: MapPin, protected: true },
+    { path: '/locations/nearby', label: t('locations.nearbyTitle'), icon: MapPin, protected: false },
     { path: '/tour/create', label: t('tours.createTour'), icon: MapPin, protected: true },
     { path: '/mytour', label: t('common.myTours'), icon: MapPin, protected: true },
   ];
@@ -172,24 +172,20 @@ function ResponsiveAppBar() {
                 {/* User Section - Mobile */}
                 {isAuthenticated && (
                   <div className="border-t px-4 py-4 space-y-2">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-lg">
-                      <Avatar className="h-10 w-10">
+                    <Link
+                      to="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                      <Avatar className="h-10 w-10 shrink-0">
                         <AvatarFallback>
                           <User className="h-5 w-5" />
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{userInfo?.name || t('common.user')}</p>
+                      <div className="flex-1 min-w-0 text-left">
+                        <p className="text-sm font-medium truncate">{userInfo?.name || t('common.user')}</p>
                         <p className="text-xs text-muted-foreground">{t('common.viewProfile')}</p>
                       </div>
-                    </div>
-                    <Link
-                      to="/profile"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                    >
-                      <UserCircle className="h-5 w-5" />
-                      <span>{t('common.profile')}</span>
                     </Link>
                     <button
                       onClick={handleLogoutClick}

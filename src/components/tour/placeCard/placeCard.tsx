@@ -3,31 +3,40 @@ import { ITourPlace, ITourPlaceMedia } from '@/entities/tourPlace';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { StarRating } from '@/components/ui/starRating';
 import { MapPin, Clock, ChevronDown, ChevronUp, Music, Video, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface PlaceCardProps {
   place: ITourPlace;
   index: number;
+  /** When provided and user is authenticated, show "Rate this place" */
+  onRateLocation?: (locationId: number, rating: number) => void | Promise<void>;
+  isAuthenticated?: boolean;
+  rateLoading?: boolean;
+  /** Set false when parent shows step number (e.g. timeline) to avoid duplicate */
+  showStepBadge?: boolean;
 }
 
-export const PlaceCard = ({ place, index }: PlaceCardProps) => {
+export const PlaceCard = ({ place, index, onRateLocation, isAuthenticated, rateLoading, showStepBadge = true }: PlaceCardProps) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
-  const hasDetails = place.description || (place.tags && place.tags.length > 0) || (place.average_rating != null && place.average_rating > 0);
+  const hasDetails = place.description || (place.tags && place.tags.length > 0) || (place.average_rating != null && place.average_rating > 0) || Boolean(onRateLocation && isAuthenticated);
 
   return (
-    <Card>
+    <Card className="rounded-xl border shadow-sm overflow-hidden">
       <CardHeader
-        className="cursor-pointer select-none hover:bg-muted/50 transition-colors rounded-t-lg"
+        className="cursor-pointer select-none hover:bg-muted/50 transition-colors rounded-t-xl"
         onClick={() => hasDetails && setExpanded((e) => !e)}
       >
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <Badge variant="outline" className="font-mono">
-                {index + 1}
-              </Badge>
+              {showStepBadge && (
+                <Badge variant="outline" className="font-mono">
+                  {index + 1}
+                </Badge>
+              )}
               <CardTitle className="text-lg">{place.name}</CardTitle>
               {hasDetails && (
                 <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" asChild>
@@ -68,6 +77,22 @@ export const PlaceCard = ({ place, index }: PlaceCardProps) => {
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
               <span>{place.average_rating.toFixed(1)}</span>
+            </div>
+          )}
+          {onRateLocation && (
+            <div className="space-y-2 pt-2 border-t">
+              <span className="text-xs text-muted-foreground">{t('tours.rateThisPlace')}</span>
+              {isAuthenticated ? (
+                <StarRating
+                  value={place.average_rating ?? undefined}
+                  max={5}
+                  onSubmit={(r) => onRateLocation(place.id, r)}
+                  loading={rateLoading}
+                  size="sm"
+                />
+              ) : (
+                <p className="text-xs text-muted-foreground">{t('tours.signInToRate')}</p>
+              )}
             </div>
           )}
         </CardContent>

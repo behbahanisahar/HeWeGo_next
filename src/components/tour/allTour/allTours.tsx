@@ -4,6 +4,8 @@ import { IAllTourItems } from "src/entities/tour";
 import { AllTourCard } from "../allTourCard/allTourCard";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { LocationFilter } from '@/components/location/locationFilter';
 import { filterToursByLocation } from '@/utils/location';
 
@@ -19,7 +21,6 @@ export const AllTours = () => {
   const itemsPerPage = 9;
   const observerTarget = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   const [filteredTours, setFilteredTours] = useState<IAllTourItems[]>([]);
 
@@ -52,29 +53,17 @@ export const AllTours = () => {
     };
   }, []);
 
-  // Filter tours based on location and search - this creates the filtered list
+  // Filter tours by search only (location only on Locations Near You page)
   useEffect(() => {
     if (allToursData.length === 0) {
       setFilteredTours([]);
       return;
     }
-
-    // If location is enabled and no search, filter by location (500km radius)
-    // If search exists, show all matching tours regardless of location
-    const shouldFilterByLocation = userLocation && !searchQuery;
-
-    const filtered = filterToursByLocation(
-      allToursData,
-      searchQuery,
-      userLocation ?? undefined,
-      shouldFilterByLocation ? 500 : undefined // Only apply distance filter if location enabled and no search
-    );
-
+    const filtered = filterToursByLocation(allToursData, searchQuery, undefined, undefined);
     setFilteredTours(filtered);
-    // Reset to page 1 when filters change
     setPage(1);
     setTours([]);
-  }, [allToursData, searchQuery, userLocation]);
+  }, [allToursData, searchQuery]);
 
   // Load tours for current page from filtered list
   useEffect(() => {
@@ -133,49 +122,60 @@ export const AllTours = () => {
   }, [hasMore, loading, page, loadTours]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <LocationFilter
-        onLocationChange={setUserLocation}
         onSearchChange={setSearchQuery}
         searchQuery={searchQuery}
-        userLocation={userLocation}
       />
 
       {initialLoading ? (
-        <div className="flex justify-center py-16">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <span>{t("tours.loading")}</span>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {[...Array(9)].map((_, i) => (
+            <Card key={i} className="overflow-hidden rounded-xl border shadow-sm">
+              <Skeleton className="aspect-square w-full rounded-t-xl" />
+              <div className="p-4 space-y-3">
+                <Skeleton className="h-5 w-3/4 rounded-md" />
+                <Skeleton className="h-4 w-full rounded-md" />
+                <div className="flex gap-2 pt-2">
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
       ) : fetchError ? (
-        <div className="text-center py-12">
-          <p className="text-destructive mb-2">{t("tours.loadError")}</p>
-          <p className="text-sm text-muted-foreground">{t("tours.loadErrorHint")}</p>
-        </div>
+        <Card className="rounded-2xl border shadow-sm overflow-hidden">
+          <div className="text-center py-14 px-6">
+            <p className="text-destructive font-medium mb-2">{t("tours.loadError")}</p>
+            <p className="text-sm text-muted-foreground">{t("tours.loadErrorHint")}</p>
+          </div>
+        </Card>
       ) : tours.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {tours.map((tour: IAllTourItems) => (
               <AllTourCard key={tour.id} tour={tour} />
             ))}
           </div>
-          <div ref={observerTarget} className="flex justify-center py-8">
+          <div ref={observerTarget} className="flex flex-col items-center justify-center py-10">
             {loading && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="h-5 w-5 animate-spin" />
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <Loader2 className="h-5 w-5 animate-spin shrink-0" />
                 <span>{t("tours.loadingMore")}</span>
               </div>
             )}
             {!hasMore && tours.length > 0 && (
-              <p className="text-muted-foreground text-center">{t("tours.endOfList")}</p>
+              <p className="text-sm text-muted-foreground mt-2">{t("tours.endOfList")}</p>
             )}
           </div>
         </>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">{t("tours.noTours")}</p>
-        </div>
+        <Card className="rounded-2xl border shadow-sm overflow-hidden">
+          <div className="text-center py-16 px-6">
+            <p className="text-muted-foreground font-medium">{t("tours.noTours")}</p>
+          </div>
+        </Card>
       )}
     </div>
   );

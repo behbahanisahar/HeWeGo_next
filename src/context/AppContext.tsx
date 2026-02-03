@@ -9,6 +9,8 @@ export interface AppContextState {
 interface AppContextActions {
   setUserInfo: (data: IUserInfo) => void;
   setFavorites: (favorites: unknown[]) => void;
+  /** Fetch favourites from API and update state (call after add/remove favourite). */
+  refreshFavorites: () => Promise<void>;
   /** Set user + persist token/user to localStorage (use after login). Pass refresh_token if backend returns it for silent token refresh. */
   setAuth: (
     user: IUserInfo,

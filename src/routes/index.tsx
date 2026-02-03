@@ -10,7 +10,7 @@ import TourDetail from "../pages/tourDetail/tourDetail";
 import ProfileContainer from "../pages/profile/profileContainer";
 import MyTour from "../pages/myTour/myTour";
 import CreateTour from "../pages/createTour/createTour";
-import NearbyTours from "../pages/nearbyTours/nearbyTours";
+import NearbyLocationsPage from "../pages/nearbyLocations/nearbyLocations";
 import RequireAuth from "./RequireAuth";
 
 const routeList = [
@@ -20,7 +20,7 @@ const routeList = [
   { path: "profile", element: <ProfileContainer />, protected: true },
   { path: "profile/edit", element: <ProfileEditableForm />, protected: true },
   { path: "tour/create", element: <CreateTour />, protected: true },
-  { path: "tour/nearby", element: <NearbyTours />, protected: true },
+  { path: "locations/nearby", element: <NearbyLocationsPage /> },
   { path: "tour/:id", element: <TourDetail /> },
   { path: "tour", element: <Tour /> },
   { path: "mytour", element: <MyTour />, protected: true },

@@ -85,7 +85,13 @@
     "selectCity": "Stadt auswählen",
     "searchCity": "Städte suchen...",
     "noCityFound": "Keine Stadt gefunden.",
+    "addToFavourites": "Zu Favoriten hinzufügen",
+    "inFavourites": "In deinen Favoriten",
+    "removeFromFavourites": "Aus Favoriten entfernen",
+    "myFavourites": "Meine Favoriten",
     "myCreatedTours": "Meine erstellten Touren",
+    "noCreatedTours": "Sie haben noch keine Touren erstellt.",
+    "createFirstTourHint": "Erstellen Sie Ihre erste Tour und teilen Sie sie mit anderen.",
     "nearbyTours": "Touren in Ihrer Nähe",
     "selectLocation": "Standort auswählen",
     "addPlace": "Ort hinzufügen",
@@ -94,7 +100,11 @@
     "saveTour": "Tour speichern",
     "tourCreated": "Tour erfolgreich erstellt!",
     "userCreated": "Von Benutzer erstellte Tour",
-    "media": "Medien"
+    "media": "Medien",
+    "rateThisTour": "Tour bewerten",
+    "rateThisPlace": "Ort bewerten",
+    "rateSubmitted": "Danke für Ihre Bewertung!",
+    "signInToRate": "Zum Bewerten anmelden"
   },
   "auth": {
     "signInRequired": "Anmeldung erforderlich",
@@ -133,6 +143,8 @@
     "errorOccurred": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
   },
   "profile": {
+    "subtitle": "Ihr Konto und erstellte Touren",
+    "tourLeader": "Tour-Leiter",
     "editProfile": "Profil bearbeiten",
     "updateInfo": "Aktualisieren Sie Ihre Profilinformationen",
     "name": "Name",
@@ -162,13 +174,23 @@
     "mapSearchPlaceholder": "Ort oder Adresse suchen...",
     "search": "Suchen",
     "searchNotFound": "Ort nicht gefunden. Versuchen Sie eine andere Suche.",
-    "searchError": "Suche fehlgeschlagen. Bitte erneut versuchen."
+    "searchError": "Suche fehlgeschlagen. Bitte erneut versuchen.",
+    "nearbyTitle": "Orte in Ihrer Nähe",
+    "nearbySubtitle": "Entdecken Sie Orte in Ihrer Nähe. Aktivieren Sie den Standort, um Ergebnisse zu sehen.",
+    "filterByTags": "Nach Tags filtern:",
+    "maxDistance": "Im Umkreis von",
+    "nearbyError": "Orte in der Nähe konnten nicht geladen werden. Bitte erneut versuchen.",
+    "nearbyEnableLocation": "Aktivieren Sie den Standort, um Orte in Ihrer Nähe zu sehen.",
+    "nearbyNoResults": "In dieser Entfernung wurden keine Orte gefunden. Versuchen Sie, den Radius zu vergrößern oder die Tags zu ändern.",
+    "noDescription": "Keine Beschreibung verfügbar.",
+    "away": "entfernt"
   },
   "location": {
     "searchPlaceholder": "Nach Stadt oder Land suchen...",
     "useMyLocation": "Meinen Standort verwenden",
     "gettingLocation": "Standort wird ermittelt...",
     "usingLocation": "Ihr Standort wird verwendet",
+    "youAreIn": "Sie sind in:",
     "clear": "Löschen",
     "locationDenied": "Standortzugriff verweigert. Bitte aktivieren Sie die Standortberechtigungen.",
     "locationError": "Standort konnte nicht ermittelt werden. Bitte versuchen Sie es erneut.",

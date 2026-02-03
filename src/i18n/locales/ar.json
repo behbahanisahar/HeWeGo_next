@@ -85,7 +85,13 @@
     "selectCity": "اختر المدينة",
     "searchCity": "البحث عن المدن...",
     "noCityFound": "لم يتم العثور على مدينة.",
+    "addToFavourites": "إضافة إلى المفضلة",
+    "inFavourites": "في مفضلتك",
+    "removeFromFavourites": "إزالة من المفضلة",
+    "myFavourites": "مفضلاتي",
     "myCreatedTours": "جولاتي المنشأة",
+    "noCreatedTours": "لم تنشئ أي جولات بعد.",
+    "createFirstTourHint": "أنشئ جولتك الأولى وشاركها مع الآخرين.",
     "nearbyTours": "الجولات القريبة منك",
     "selectLocation": "اختر الموقع",
     "addPlace": "إضافة مكان",
@@ -94,7 +100,11 @@
     "saveTour": "حفظ الجولة",
     "tourCreated": "تم إنشاء الجولة بنجاح!",
     "userCreated": "جولة منشأة من قبل المستخدم",
-    "media": "الوسائط"
+    "media": "الوسائط",
+    "rateThisTour": "قيّم هذه الجولة",
+    "rateThisPlace": "قيّم هذا المكان",
+    "rateSubmitted": "شكراً لتقييمك!",
+    "signInToRate": "سجّل الدخول للتقييم"
   },
   "auth": {
     "signInRequired": "تسجيل الدخول مطلوب",
@@ -133,6 +143,8 @@
     "errorOccurred": "حدث خطأ. يرجى المحاولة مرة أخرى."
   },
   "profile": {
+    "subtitle": "حسابك والجولات المنشأة",
+    "tourLeader": "قائد الجولة",
     "editProfile": "تعديل الملف الشخصي",
     "updateInfo": "قم بتحديث معلومات ملفك الشخصي",
     "name": "الاسم",
@@ -162,13 +174,23 @@
     "mapSearchPlaceholder": "البحث عن مكان أو عنوان...",
     "search": "بحث",
     "searchNotFound": "لم يتم العثور على المكان. جرب بحثاً آخر.",
-    "searchError": "فشل البحث. حاول مرة أخرى."
+    "searchError": "فشل البحث. حاول مرة أخرى.",
+    "nearbyTitle": "مواقع قريبة منك",
+    "nearbySubtitle": "اكتشف الأماكن القريبة من موقعك الحالي. فعّل الموقع لرؤية النتائج.",
+    "filterByTags": "تصفية حسب الوسوم:",
+    "maxDistance": "ضمن",
+    "nearbyError": "فشل تحميل المواقع القريبة. يرجى المحاولة مرة أخرى.",
+    "nearbyEnableLocation": "فعّل الموقع لرؤية الأماكن القريبة منك.",
+    "nearbyNoResults": "لم يتم العثور على مواقع ضمن هذه المسافة. جرّب زيادة نصف القطر أو تغيير الوسوم.",
+    "noDescription": "لا يوجد وصف.",
+    "away": "بعيداً"
   },
   "location": {
     "searchPlaceholder": "البحث حسب المدينة أو الدولة...",
     "useMyLocation": "استخدام موقعي",
     "gettingLocation": "جاري الحصول على الموقع...",
     "usingLocation": "استخدام موقعك",
+    "youAreIn": "أنت في:",
     "clear": "مسح",
     "locationDenied": "تم رفض الوصول إلى الموقع. يرجى تفعيل أذونات الموقع.",
     "locationError": "تعذر الحصول على موقعك. يرجى المحاولة مرة أخرى.",
