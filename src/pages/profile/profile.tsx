@@ -8,6 +8,7 @@ import { Mail, MapPin, Edit, MapPinned, Plus, Heart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Context } from "@/context/AppContext";
 import type { IFavouriteItem } from "@/api/favourites/get";
+import type { ITour } from "@/entities/tour";
 import homepage from "@/images/homepage.jpg";
 import img2 from "@/images/homepage2.jpg";
 import img3 from "@/images/homepage3.jpg";
@@ -19,7 +20,7 @@ const Profile = () => {
   const appContext = useContext(Context);
   const userInfo = appContext?.state.userInfo;
   const navigate = useNavigate();
-  const createdTours = Array.isArray(userInfo?.created_tours) ? userInfo.created_tours : [];
+  const createdTours: ITour[] = [...(userInfo?.created_tours ?? [])];
   const favorites = (appContext?.state.favorites ?? []) as IFavouriteItem[];
 
   useEffect(() => {

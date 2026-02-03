@@ -51,7 +51,6 @@ const TourDetail = () => {
   const appContext = useContext(Context);
   const [tour, setTour] = useState<IAllTourItems | null>(null);
   const [loading, setLoading] = useState(true);
-  const [cities, setCities] = useState<ICity[]>([]);
   const [_currentImageIndex, _setCurrentImageIndex] = useState(0);
   const [estimatedDuration, setEstimatedDuration] = useState<number | null>(null);
   const [favouriteLoading, setFavouriteLoading] = useState(false);
@@ -132,7 +131,6 @@ const TourDetail = () => {
     Promise.all([getTourById(id), getAllCities()])
       .then(([data, citiesList]) => {
         const list = Array.isArray(citiesList) ? citiesList : [];
-        setCities(list);
         const rawLocations = Array.isArray(data?.locations) ? data.locations : [];
         const places = mapLocationsToPlaces(rawLocations);
         const cityId = data?.city_id ?? data?.city?.id;
