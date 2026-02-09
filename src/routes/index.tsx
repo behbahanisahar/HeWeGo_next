@@ -7,6 +7,7 @@ import Home from "../pages/home/home";
 import ProfileEditableForm from "../pages/profile/profileEditableForm";
 import Tour from "../pages/tour/tour";
 import TourDetail from "../pages/tourDetail/tourDetail";
+import TourStart from "../pages/tourStart/tourStart";
 import ProfileContainer from "../pages/profile/profileContainer";
 import MyTour from "../pages/myTour/myTour";
 import CreateTour from "../pages/createTour/createTour";
@@ -21,6 +22,7 @@ const routeList = [
   { path: "profile/edit", element: <ProfileEditableForm />, protected: true },
   { path: "tour/create", element: <CreateTour />, protected: true },
   { path: "locations/nearby", element: <NearbyLocationsPage /> },
+  { path: "tour/:id/start", element: <TourStart /> },
   { path: "tour/:id", element: <TourDetail /> },
   { path: "tour", element: <Tour /> },
   { path: "mytour", element: <MyTour />, protected: true },

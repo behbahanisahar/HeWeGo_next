@@ -1,5 +1,11 @@
 import { axiosInstance } from '../axiosInstance';
 
+/** Per-location visit time (minutes) set by tour creator. */
+export interface ILocationEstimatedTime {
+  location_id: number;
+  estimated_time: number;
+}
+
 export interface ICreateTourPayload {
   name: string;
   city: number;
@@ -7,8 +13,10 @@ export interface ICreateTourPayload {
   tags: string[];
   /** Optional: IDs of user locations to include in this tour (from GET /api/user_locations). */
   location_ids?: number[];
-  /** Optional: estimated duration in minutes. */
+  /** Optional: estimated duration in minutes (total tour). */
   estimated_duration?: number;
+  /** Optional: visit time in minutes per location (set by creator). Backend may use this to store and return estimated_time per place. */
+  location_estimated_times?: ILocationEstimatedTime[];
   /** Optional: price in currency units (e.g. single price). Sent as array for API compatibility. */
   prices?: number[];
 }

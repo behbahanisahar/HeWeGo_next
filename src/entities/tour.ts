@@ -44,6 +44,9 @@ export interface ITourLocation {
   explanation?: string | null;
   tags?: string[];
   average_rating?: number | null;
+  /** Visit time in minutes (set by tour creator). API may return estimated_time or estimatedTime. */
+  estimated_time?: number;
+  estimatedTime?: number;
 }
 
 /** Response from GET /api/tours/:id (single tour with locations for map) */

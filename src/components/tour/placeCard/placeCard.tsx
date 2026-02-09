@@ -16,9 +16,11 @@ interface PlaceCardProps {
   rateLoading?: boolean;
   /** Set false when parent shows step number (e.g. timeline) to avoid duplicate */
   showStepBadge?: boolean;
+  /** When true, show "Visit: X min (suggested by creator)" for estimatedTime */
+  showVisitByCreator?: boolean;
 }
 
-export const PlaceCard = ({ place, index, onRateLocation, isAuthenticated, rateLoading, showStepBadge = true }: PlaceCardProps) => {
+export const PlaceCard = ({ place, index, onRateLocation, isAuthenticated, rateLoading, showStepBadge = true, showVisitByCreator = false }: PlaceCardProps) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const hasDetails = place.description || (place.tags && place.tags.length > 0) || (place.average_rating != null && place.average_rating > 0) || Boolean(onRateLocation && isAuthenticated);
@@ -52,7 +54,7 @@ export const PlaceCard = ({ place, index, onRateLocation, isAuthenticated, rateL
             )}
           </div>
           {place.estimatedTime && (
-            <Badge variant="secondary" className="flex items-center gap-1 shrink-0">
+            <Badge variant="secondary" className="flex items-center gap-1 shrink-0" title={showVisitByCreator ? t('tours.visitTimeByCreator', { minutes: place.estimatedTime }) : undefined}>
               <Clock className="h-3 w-3" />
               <span>{place.estimatedTime} min</span>
             </Badge>

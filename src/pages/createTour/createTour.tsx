@@ -54,6 +54,8 @@ const CreateTour = () => {
   const cityDropdownRef = useRef<HTMLDivElement>(null);
   const [estimatedDurationMinutes, setEstimatedDurationMinutes] = useState<number | ''>('');
   const [priceInput, setPriceInput] = useState<string>('');
+  /** Visit time in minutes per location (set by creator). Key = location id. */
+  const [locationVisitMinutes, setLocationVisitMinutes] = useState<Record<number, number>>({});
 
   useEffect(() => {
     getAllCities()
@@ -306,13 +308,22 @@ const CreateTour = () => {
       const priceNum = priceInput.trim() ? Number(priceInput.trim()) : undefined;
       const prices = priceNum != null && !Number.isNaN(priceNum) && priceNum >= 0 ? [priceNum] : undefined;
       const duration = estimatedDurationMinutes === '' ? undefined : Number(estimatedDurationMinutes);
+      const locationIds = Array.from(selectedLocationIds);
+      const location_estimated_times =
+        locationIds.length > 0
+          ? locationIds.map((locId) => ({
+              location_id: locId,
+              estimated_time: locationVisitMinutes[locId] ?? 30,
+            }))
+          : undefined;
       const result = await createTour({
         name: name.trim(),
         city: Number(cityId),
         explanation: explanation.trim() || '',
         tags,
-        ...(selectedLocationIds.size > 0 && { location_ids: Array.from(selectedLocationIds) }),
+        ...(locationIds.length > 0 && { location_ids: locationIds }),
         ...(duration != null && duration > 0 && { estimated_duration: duration }),
+        ...(location_estimated_times && location_estimated_times.length > 0 && { location_estimated_times }),
         ...(prices != null && prices.length > 0 && { prices }),
       });
       setMessage(t('tours.tourCreated'));
@@ -610,6 +621,47 @@ const CreateTour = () => {
                 </ul>
               )}
             </div>
+
+            {/* Selected places: visit time per location (defined by tour creator) */}
+            {selectedLocationIds.size > 0 && (
+              <div>
+                <Label className="mb-2 block">{t('tours.selectedPlacesVisitTime')}</Label>
+                <p className="text-xs text-muted-foreground mb-2">{t('tours.selectedPlacesVisitTimeHint')}</p>
+                <ul className="space-y-3">
+                  {Array.from(selectedLocationIds).map((locId, idx) => {
+                    const loc = userLocations.find((l) => l.id === locId);
+                    const label = loc ? loc.name : `Place ${idx + 1}`;
+                    const value = locationVisitMinutes[locId] ?? 30;
+                    return (
+                      <li key={locId} className="flex items-center gap-3 rounded-md border p-3">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium">
+                          {idx + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate font-medium">{label}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Label htmlFor={`visit-${locId}`} className="text-xs text-muted-foreground whitespace-nowrap">
+                            {t('tours.visitTimeMinutes')}
+                          </Label>
+                          <Input
+                            id={`visit-${locId}`}
+                            type="number"
+                            min={1}
+                            max={480}
+                            value={value}
+                            onChange={(e) => {
+                              const v = Math.max(1, Math.min(480, parseInt(e.target.value, 10) || 30));
+                              setLocationVisitMinutes((prev) => ({ ...prev, [locId]: v }));
+                            }}
+                            className="w-20"
+                          />
+                          <span className="text-xs text-muted-foreground">{t('tours.minutes')}</span>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
 
             {/* Create new location (when map clicked) - use div not form to avoid nested form (outer form is Create Tour) */}
             {newLocLat != null && newLocLng != null && (

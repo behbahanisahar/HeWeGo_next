@@ -10,5 +10,7 @@ export default interface IUserInfo{
     role: string;
     member_circles: any[];
     created_circles: any[];
-    created_tours: ITour[]
+    created_tours: ITour[];
+    /** Tours the user has purchased; when present, "Start tour" is available in profile and on tour detail */
+    booked_tours?: ITour[];
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, Star, MapPin, Users, DollarSign, Clock, Route, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { getTourById } from '@/api/tour/get';
 import { Context } from '@/context/AppContext';
 import { addFavourite } from '@/api/favourites/post';
@@ -22,7 +23,8 @@ import { PlaceCard } from '@/components/tour/placeCard/placeCard';
 import { StarRating } from '@/components/ui/starRating';
 import { rateTour } from '@/api/rating/tour/post';
 import { rateLocation } from '@/api/rating/location/post';
-import { estimateTourDuration, formatDuration } from '@/utils/aiEstimation';
+import { formatDuration } from '@/utils/aiEstimation';
+import { useRealRouteTimes } from '@/hooks/useRealRouteTimes';
 import { getPriceDisplay, formatPriceDisplay } from '@/utils/tourPrice';
 import homepage from "@/images/homepage.jpg";
 import homepage2 from "@/images/homepage2.jpg";
@@ -30,7 +32,7 @@ import homepage3 from "@/images/homepage3.jpg";
 
 const sampleImages = [homepage, homepage2, homepage3];
 
-/** Map API locations to ITourPlace; keep explanation, tags, average_rating for expand-on-click UX */
+/** Map API locations to ITourPlace; keep explanation, tags, average_rating, visit time from creator */
 function mapLocationsToPlaces(locations: ITourLocation[]): ITourPlace[] {
   return (locations ?? []).map((loc, index) => ({
     id: loc.id,
@@ -41,6 +43,7 @@ function mapLocationsToPlaces(locations: ITourLocation[]): ITourPlace[] {
     order: index,
     tags: loc.tags,
     average_rating: loc.average_rating,
+    estimatedTime: loc.estimated_time ?? loc.estimatedTime,
   }));
 }
 
@@ -52,14 +55,22 @@ const TourDetail = () => {
   const [tour, setTour] = useState<IAllTourItems | null>(null);
   const [loading, setLoading] = useState(true);
   const [_currentImageIndex, _setCurrentImageIndex] = useState(0);
-  const [estimatedDuration, setEstimatedDuration] = useState<number | null>(null);
   const [favouriteLoading, setFavouriteLoading] = useState(false);
   const [tourRatingLoading, setTourRatingLoading] = useState(false);
   const [ratingLocationId, setRatingLocationId] = useState<number | null>(null);
 
+  const displayPlaces = useMemo(
+    () => [...(tour?.places ?? [])].sort((a, b) => a.order - b.order),
+    [tour?.places]
+  );
+
+  const { legs: legEstimatesAllModes, totalsByMode, loading: routeTimesLoading, hasRealTimesAvailable } = useRealRouteTimes(displayPlaces);
+
   const isAuthenticated = Boolean(appContext?.state.userInfo?.id);
   const favorites = (appContext?.state.favorites ?? []) as IFavouriteItem[];
   const isFavourite = id != null && favorites.some((f) => Number(f.id) === Number(id));
+  const bookedTours = appContext?.state.userInfo?.booked_tours ?? [];
+  const hasBookedThisTour = tour != null && bookedTours.some((bt) => Number(bt.tour_id) === Number(tour.id));
 
   const handleFavouriteToggle = async () => {
     if (!isAuthenticated) {
@@ -153,9 +164,6 @@ const TourDetail = () => {
           places: places.length > 0 ? places : undefined,
         };
         setTour(tourFromApi);
-        if (places.length > 0) {
-          setEstimatedDuration(estimateTourDuration(places));
-        }
       })
       .catch((err) => {
         console.error("Error fetching tour:", err);
@@ -327,9 +335,9 @@ const TourDetail = () => {
             </Card>
 
             {/* Map Section - Show multi-place map if places exist, otherwise single location */}
-            {tour.places && tour.places.length > 0 ? (
+            {displayPlaces.length > 0 ? (
               <TourMapMultiPlace
-                places={tour.places}
+                places={displayPlaces}
                 tourName={tour.name}
                 cityName={tour.city?.name}
               />
@@ -343,7 +351,7 @@ const TourDetail = () => {
             ) : null}
 
             {/* Tour Places/Stops – timeline layout */}
-            {tour.places && tour.places.length > 0 && (
+            {displayPlaces.length > 0 && (
               <Card className="rounded-xl border shadow-sm overflow-hidden">
                 <CardContent className="p-6 md:p-8">
                   <div className="flex items-center gap-3 mb-6">
@@ -351,20 +359,18 @@ const TourDetail = () => {
                       <Route className="h-5 w-5" />
                     </span>
                     <h2 className="text-xl md:text-2xl font-bold tracking-tight">
-                      {t('tours.places')} ({tour.places.length} {tour.places.length === 1 ? t('tours.stop') : t('tours.stops')})
+                      {t('tours.places')} ({displayPlaces.length} {displayPlaces.length === 1 ? t('tours.stop') : t('tours.stops')})
                     </h2>
                   </div>
                   <div className="relative pl-8 sm:pl-10">
-                    {/* Vertical timeline line */}
                     <div
                       className="absolute left-[11px] sm:left-[15px] top-6 bottom-6 w-px bg-border"
                       aria-hidden
                     />
                     <div className="space-y-4">
-                      {tour.places
-                        .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
-                        .map((place: ITourPlace, index: number) => (
-                          <div key={place.id} className="relative flex gap-4">
+                      {displayPlaces.map((place: ITourPlace, index: number) => (
+                        <div key={place.id} className="relative flex flex-col gap-2">
+                          <div className="relative flex gap-4">
                             <div className="absolute left-[-1.6rem] sm:left-[-2rem] top-5 flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-background text-xs font-semibold text-primary">
                               {index + 1}
                             </div>
@@ -376,10 +382,30 @@ const TourDetail = () => {
                                 isAuthenticated={isAuthenticated}
                                 rateLoading={ratingLocationId === place.id}
                                 showStepBadge={false}
+                                showVisitByCreator
                               />
+                              {place.estimatedTime != null && place.estimatedTime > 0 && (
+                                <p className="pl-4 sm:pl-6 text-sm text-muted-foreground mt-2">
+                                  {t('tours.visitTimeByCreator', { minutes: place.estimatedTime })}
+                                </p>
+                              )}
                             </div>
                           </div>
-                        ))}
+                          {index < legEstimatesAllModes.length && (
+                            <div className="flex items-center gap-2 pl-4 sm:pl-6 text-sm text-muted-foreground">
+                              <span className="h-px flex-1 max-w-[2rem] bg-border" aria-hidden />
+                              <span>
+                                {t('tours.legTravelTimes', {
+                                  walk: legEstimatesAllModes[index].travelTimeByMode.walk,
+                                  car: legEstimatesAllModes[index].travelTimeByMode.drive,
+                                  transit: legEstimatesAllModes[index].travelTimeByMode.transit,
+                                  bike: legEstimatesAllModes[index].travelTimeByMode.bicycle,
+                                })}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </CardContent>
@@ -439,15 +465,28 @@ const TourDetail = () => {
                   )}
                 </div>
 
-                {(estimatedDuration !== null || tour.estimatedDuration) && (
+                {(displayPlaces.length > 0 || tour.estimatedDuration) && (
                   <div className="space-y-2 pt-4 border-t">
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock className="h-4 w-4" />
-                      <span className="text-sm">{t('tours.estimatedDuration')}</span>
+                      <span className="text-sm">{t('tours.estimatedTotalByMode')}</span>
+                      {routeTimesLoading && (
+                        <span className="text-xs text-muted-foreground/80">({t('tours.loadingTravelTimes')})</span>
+                      )}
+                      {hasRealTimesAvailable && !routeTimesLoading && (
+                        <span className="text-xs text-primary" title={t('tours.realTravelTimes')}>•</span>
+                      )}
                     </div>
-                    <p className="font-medium">
-                      {formatDuration(estimatedDuration || tour.estimatedDuration || 0)}
-                    </p>
+                    {displayPlaces.length > 0 ? (
+                      <ul className="text-sm space-y-1 font-medium">
+                        <li>{t('tours.travelByWalk')}: {formatDuration(totalsByMode.walk)}</li>
+                        <li>{t('tours.travelByDrive')}: {formatDuration(totalsByMode.drive)}</li>
+                        <li>{t('tours.travelByTransit')}: {formatDuration(totalsByMode.transit)}</li>
+                        <li>{t('tours.travelByBicycle')}: {formatDuration(totalsByMode.bicycle)}</li>
+                      </ul>
+                    ) : (
+                      <p className="font-medium">{formatDuration(tour.estimatedDuration ?? 0)}</p>
+                    )}
                   </div>
                 )}
 
@@ -461,9 +500,22 @@ const TourDetail = () => {
                   </div>
                 )}
 
-                <Button className="w-full mt-6 rounded-xl" size="lg">
-                  {t('tours.bookThisTour')}
-                </Button>
+                <div className="flex flex-col gap-2 mt-6">
+                  {hasBookedThisTour ? (
+                    <Button className="w-full rounded-xl" size="lg" asChild>
+                      <Link to={`/tour/${tour.id}/start`}>{t('tours.startThisTour')}</Link>
+                    </Button>
+                  ) : (
+                    <Button className="w-full rounded-xl" size="lg">
+                      {t('tours.bookThisTour')}
+                    </Button>
+                  )}
+                  {hasBookedThisTour && (
+                    <p className="text-center text-xs text-muted-foreground">
+                      {t('tours.youBookedThisTour')}
+                    </p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>

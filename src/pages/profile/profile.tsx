@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, MapPin, Edit, MapPinned, Plus, Heart } from "lucide-react";
+import { Mail, MapPin, Edit, MapPinned, Plus, Heart, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Context } from "@/context/AppContext";
 import type { IFavouriteItem } from "@/api/favourites/get";
@@ -21,6 +21,7 @@ const Profile = () => {
   const userInfo = appContext?.state.userInfo;
   const navigate = useNavigate();
   const createdTours: ITour[] = [...(userInfo?.created_tours ?? [])];
+  const bookedTours: ITour[] = [...(userInfo?.booked_tours ?? [])];
   const favorites = (appContext?.state.favorites ?? []) as IFavouriteItem[];
 
   useEffect(() => {
@@ -127,6 +128,58 @@ const Profile = () => {
                         </h3>
                       </div>
                     </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* My booked tours – purchased tours; start from here */}
+      {bookedTours.length > 0 && (
+        <Card className="w-full overflow-hidden rounded-2xl border shadow-sm">
+          <CardHeader className="px-6 pb-4 pt-6 sm:px-8 sm:pb-5 sm:pt-8">
+            <h2 className="flex items-center gap-3 text-lg font-semibold sm:text-xl">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Play className="h-5 w-5" />
+              </span>
+              {t("tours.myBookedTours")}
+            </h2>
+          </CardHeader>
+          <CardContent className="px-6 pb-6 sm:px-8 sm:pb-8">
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {bookedTours.map((tour, index) => {
+                const imageSrc = TOUR_PLACEHOLDER_IMAGES[index % TOUR_PLACEHOLDER_IMAGES.length];
+                return (
+                  <li key={tour.tour_id}>
+                    <div className="group overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
+                      <Link
+                        to={`/tour/${tour.tour_id}`}
+                        className="block"
+                      >
+                        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                          <img
+                            src={imageSrc}
+                            alt={tour.tour_name}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        </div>
+                        <div className="p-3 sm:p-4">
+                          <h3 className="font-semibold line-clamp-2 text-sm sm:text-base">
+                            {tour.tour_name}
+                          </h3>
+                        </div>
+                      </Link>
+                      <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+                        <Button className="w-full rounded-xl" size="sm" asChild>
+                          <Link to={`/tour/${tour.tour_id}/start`}>
+                            <Play className="h-4 w-4 shrink-0" />
+                            {t("tours.startTour")}
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
                   </li>
                 );
               })}

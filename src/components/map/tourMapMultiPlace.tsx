@@ -4,18 +4,29 @@ import { MapPin, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ITourPlace } from '@/entities/tourPlace';
 
+export interface UserLocationMarker {
+  latitude: number;
+  longitude: number;
+  label?: string;
+}
+
 interface TourMapMultiPlaceProps {
   places: ITourPlace[];
   tourName?: string;
   cityName?: string;
+  /** When set, show user position and include in bounds (e.g. "Start tour" view). */
+  userLocation?: UserLocationMarker | null;
+  /** When true, render only the map (no Card/header), for embedding. */
+  embed?: boolean;
 }
 
-export const TourMapMultiPlace = ({ places, tourName, cityName }: TourMapMultiPlaceProps) => {
+export const TourMapMultiPlace = ({ places, tourName, cityName, userLocation, embed }: TourMapMultiPlaceProps) => {
   const { t } = useTranslation();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const polylineRef = useRef<any>(null);
+  const userMarkerRef = useRef<any>(null);
   const [mapError, setMapError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,10 +52,11 @@ export const TourMapMultiPlace = ({ places, tourName, cityName }: TourMapMultiPl
         // Sort places by order
         const sortedPlaces = [...places].sort((a, b) => a.order - b.order);
 
-        // Calculate bounds to fit all markers
-        const bounds = L.latLngBounds(
-          sortedPlaces.map(place => [place.latitude, place.longitude])
-        );
+        const allPoints: [number, number][] = sortedPlaces.map((p) => [p.latitude, p.longitude]);
+        if (userLocation) {
+          allPoints.push([userLocation.latitude, userLocation.longitude]);
+        }
+        const bounds = L.latLngBounds(allPoints);
 
         const container = mapContainerRef.current
         if (!mapRef.current && container) {
@@ -115,16 +127,30 @@ export const TourMapMultiPlace = ({ places, tourName, cityName }: TourMapMultiPl
           markersRef.current.push(marker);
         });
 
-        // Draw route polyline connecting all places
-        if (sortedPlaces.length > 1) {
-          const routeCoordinates = sortedPlaces.map(place => [place.latitude, place.longitude] as [number, number]);
-          
+        // Draw route polyline connecting all places (optionally from user to first)
+        if (sortedPlaces.length >= 1) {
+          const routeCoordinates: [number, number][] = userLocation
+            ? [[userLocation.latitude, userLocation.longitude], ...sortedPlaces.map((p) => [p.latitude, p.longitude] as [number, number])]
+            : sortedPlaces.map((p) => [p.latitude, p.longitude] as [number, number]);
           polylineRef.current = L.polyline(routeCoordinates, {
             color: '#3b82f6',
             weight: 4,
             opacity: 0.7,
             smoothFactor: 1,
           }).addTo(mapRef.current);
+        }
+
+        // User location marker (e.g. "You are here")
+        if (userLocation && mapRef.current) {
+          const userIcon = L.divIcon({
+            className: 'user-location-marker',
+            html: '<div style="width:20px;height:20px;border-radius:50%;background:#22c55e;border:3px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+          });
+          userMarkerRef.current = L.marker([userLocation.latitude, userLocation.longitude], { icon: userIcon })
+            .addTo(mapRef.current)
+            .bindPopup(userLocation.label || 'You are here');
         }
 
       } catch (error) {
@@ -139,6 +165,10 @@ export const TourMapMultiPlace = ({ places, tourName, cityName }: TourMapMultiPl
       if (mapRef.current) {
         markersRef.current.forEach(marker => marker.remove());
         markersRef.current = [];
+        if (userMarkerRef.current) {
+          userMarkerRef.current.remove();
+          userMarkerRef.current = null;
+        }
         if (polylineRef.current) {
           polylineRef.current.remove();
         }
@@ -146,10 +176,29 @@ export const TourMapMultiPlace = ({ places, tourName, cityName }: TourMapMultiPl
         mapRef.current = null;
       }
     };
-  }, [places, tourName, cityName]);
+  }, [places, tourName, cityName, userLocation]);
 
   if (!places || places.length === 0) {
     return null;
+  }
+
+  const mapContent = mapError ? (
+    <div className="w-full h-[500px] rounded-b-lg flex items-center justify-center bg-muted">
+      <div className="text-center space-y-2">
+        <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto" />
+        <p className="text-sm text-muted-foreground">{mapError}</p>
+      </div>
+    </div>
+  ) : (
+    <div
+      ref={mapContainerRef}
+      className="w-full h-[500px] rounded-b-lg overflow-hidden bg-muted"
+      style={{ minHeight: '500px' }}
+    />
+  );
+
+  if (embed) {
+    return mapContent;
   }
 
   return (
@@ -161,20 +210,7 @@ export const TourMapMultiPlace = ({ places, tourName, cityName }: TourMapMultiPl
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        {mapError ? (
-          <div className="w-full h-[500px] rounded-b-lg flex items-center justify-center bg-muted">
-            <div className="text-center space-y-2">
-              <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto" />
-              <p className="text-sm text-muted-foreground">{mapError}</p>
-            </div>
-          </div>
-        ) : (
-          <div 
-            ref={mapContainerRef} 
-            className="w-full h-[500px] rounded-b-lg overflow-hidden bg-muted"
-            style={{ minHeight: '500px' }}
-          />
-        )}
+        {mapContent}
       </CardContent>
     </Card>
   );

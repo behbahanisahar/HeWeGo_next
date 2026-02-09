@@ -6,6 +6,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/api': path.resolve(__dirname, 'src/api/axiosInstance'),
+      '@/hooks': path.resolve(__dirname, 'src/hooks'),
       '@/constants': path.resolve(__dirname, 'src/utils/constants'),
       '@/pages': path.resolve(__dirname, 'src/pages'),
       '@/components': path.resolve(__dirname, 'src/components'),

@@ -20,6 +20,7 @@ const EMPTY_USERINFO: IUserInfo = {
   member_circles: [],
   created_circles: [],
   created_tours: [],
+  booked_tours: [],
 };
 
 /** Read stored user from localStorage or sessionStorage (sync) so new tab/refresh stays logged in */

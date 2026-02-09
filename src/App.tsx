@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import RenderRouter from "./routes";
+import { ScrollToTop } from "./components/ScrollToTop";
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from './components/theme/theme-provider';
 import AppContextProvider from './context/AppContextProvider';
@@ -12,6 +13,7 @@ const App: FC = (): React.ReactElement => {
       <AppContextProvider>
         <ErrorBoundary>
           <Router>
+            <ScrollToTop />
             <RenderRouter />
           </Router>
         </ErrorBoundary>
